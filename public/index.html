@@ -49,8 +49,8 @@ h1 .l{display:inline-block;opacity:0;transform:translateY(30px);animation:letter
 @keyframes rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:.8}100%{opacity:0;transform:translate(var(--x),-105vh)}}
 
 /* ADMIN BTN */
-#adminBtn{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:45;display:flex;align-items:center;gap:8px;padding:11px 18px;border:1px solid var(--gold);border-radius:999px;background:rgba(10,8,7,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold2);font-family:var(--sans);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s}
-#adminBtn:hover{background:var(--gold);color:#1a1208}
+#adminBtn,#userBtn{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:45;display:flex;align-items:center;gap:8px;padding:11px 18px;border:1px solid var(--gold);border-radius:999px;background:rgba(10,8,7,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold2);font-family:var(--sans);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+#adminBtn:hover,#userBtn:hover{background:var(--gold);color:#1a1208}
 
 /* CATALOGO */
 .catalog{position:relative;padding:90px 0 60px;background:radial-gradient(ellipse at 50% 0,#33220f 0,transparent 55%),radial-gradient(ellipse at 100% 55%,#2a1a0c,transparent 50%),radial-gradient(ellipse at 0 85%,#2a1a0c,transparent 45%),linear-gradient(var(--bg),#150e08 50%,#0f0a06)}
@@ -162,7 +162,7 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 .links a{text-decoration:none;color:var(--gold2);border:1px solid var(--gold3);padding:12px 24px;border-radius:999px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;transition:all .35s}
 .links a:hover{background:var(--gold);color:#1a1208;transform:translateY(-3px)}
 @media (max-width:700px){.mosaic{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}.gal figure:nth-child(even){margin-top:0}}
-@media (max-width:520px){.panel form{grid-template-columns:1fr}.chip{padding:10px 15px;font-size:.68rem}#adminBtn{padding:9px 14px}}
+@media (max-width:520px){.panel form{grid-template-columns:1fr}.chip{padding:10px 15px;font-size:.68rem}#adminBtn,#userBtn{padding:9px 14px}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}.card,.reveal,h1 .l,.tag,.sub,.cue{opacity:1!important;transform:none!important}}
 .club,#contacto{padding:70px 0 0}
 .perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:60px}
@@ -217,10 +217,25 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 .gal{display:flex;justify-content:center}
 .gal figure{width:min(440px,100%);aspect-ratio:2/3;margin-top:0!important}
 .cue{left:0;right:0;transform:none;margin:0 auto;width:max-content}
+#adminBtn{right:auto;left:14px}
+#userBtn{cursor:pointer;background:transparent;color:var(--gold2);font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase}
+#adminBtn[hidden]{display:none}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+.tools input,.tools select{height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);padding:0 18px;font-family:var(--sans);font-size:.9rem}
+.tools input{flex:1 1 220px}.tools select{flex:0 1 220px}
+.prog{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:10px 0}
+.prog i{display:block;height:100%;background:var(--gradient)}
+.panel label.chk{display:flex;gap:10px;align-items:center;text-transform:none;letter-spacing:0}
+.panel .chk input{width:auto}
+.sb .opt input[type=checkbox]{accent-color:var(--gold)}
+.sb a{color:var(--gold2);text-decoration:underline;cursor:pointer}
+.pol p{margin:0 0 12px;font-size:.92rem;line-height:1.55;color:var(--muted)}
+.pol b{color:var(--gold2)}
 </style>
 </head>
 <body>
 
+<button id="userBtn" type="button">Ingresar</button>
 <button id="adminBtn" type="button" hidden=""><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>Administrar</button>
 
 <header class="hero" id="hero">
@@ -238,7 +253,9 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 <main class="catalog" id="catalogo">
   <div class="wrap"><div class="reveal"><div class="orn"><b></b></div><h2 class="gold">La colección</h2><p class="lead">Elegí tu esencia</p></div></div>
   <div class="bar"><div class="wrap"><div id="chips"></div></div></div>
-  <div class="wrap"><div class="count" id="count"></div><div id="grid"></div></div>
+  <div class="wrap">
+    <div class="tools"><input id="busq" type="search" placeholder="Buscar perfume o marca" aria-label="Buscar perfume o marca"><select id="orden" aria-label="Ordenar por precio"><option value="">Ordenar por precio</option><option value="asc">Menor a mayor</option><option value="desc">Mayor a menor</option></select></div>
+    <div class="count" id="count"></div><div id="grid"></div></div>
 </main>
 
 <section class="gallery">
@@ -269,7 +286,7 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
   <div class="links reveal">
     <a href="https://wa.me/5493425264974" target="_blank" rel="noopener">WhatsApp</a>
     <a href="#contacto">Contacto</a>
-    <a href="#admin">Admin</a>
+    <a href="#" id="privLink">Privacidad</a>
     <a href="https://www.instagram.com/rumat.parfums/" target="_blank" rel="noopener">Instagram</a>
   </div>
 </footer>
@@ -288,7 +305,7 @@ function pf(p){return p.dto>0?Math.round(p.precio*(1-p.dto/100)):p.precio}
 function readImg(file,max){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){up(b,'image/jpeg').then(ok,no)},'image/jpeg',.82)};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode('rumat:'+s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 var data=[],pago={alias:'',titular:'',qr:''},portada='',adm='',vids=[];
-var filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
+var busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
 var LABEL={masculino:'Masculino',femenino:'Femenino',unisex:'Unisex'};
 var METODO={transferencia:'Transferencia (alias)',efectivo:'Efectivo',qr:'QR'};
 var buy=null;
@@ -318,18 +335,22 @@ function showVids(){$('#videoBox').innerHTML='';$('#videoSec').hidden=!vids.leng
 /* catálogo */
 function renderChips(){
   var box=$('#chips');box.innerHTML='';
-  [['todos','Todos'],['masculino','Masculino'],['femenino','Femenino'],['unisex','Unisex']].forEach(function(p){
+  [['todos','Todos'],['masculino','Masculino'],['femenino','Femenino'],['unisex','Unisex'],['ofertas','Ofertas'],['vendidos','Más vendidos']].forEach(function(p){
     var b=el('button','chip',p[1]);b.type='button';b.setAttribute('aria-pressed',filter===p[0]);
     b.onclick=function(){filter=p[0];renderChips();renderGrid()};box.appendChild(b)})}
 function renderGrid(){
   var g=$('#grid');g.innerHTML='';
-  var list=data.filter(function(p){return filter==='todos'||p.genero===filter});
+  function nz(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+  var list=data.filter(function(p){
+    var ok=filter==='todos'||(filter==='ofertas'?p.dto>0:filter==='vendidos'?!!p.top:p.genero===filter);
+    if(ok&&busq)ok=nz(p.nombre+' '+(p.marca||'')+' '+(p.descripcion||'')).indexOf(nz(busq))>-1;return ok});
+  if(orden)list.sort(function(a,b){return orden==='asc'?pf(a)-pf(b):pf(b)-pf(a)});
   $('#count').textContent=data.length?list.length+(list.length===1?' fragancia':' fragancias'):'';
-  if(!list.length){g.appendChild(el('div','empty',data.length?'Todavía no hay fragancias en esta categoría.':'Muy pronto vas a encontrar acá nuestras fragancias.'));return}
+  if(!list.length){g.appendChild(el('div','empty',data.length?(busq?'No encontramos fragancias con esa búsqueda.':'Todavía no hay fragancias en esta categoría.'):'Muy pronto vas a encontrar acá nuestras fragancias.'));return}
   list.forEach(function(p,i){
     var c=el('article','card');c.style.setProperty('--i',i);
     if(p.fotos&&p.fotos.length){var ph=el('div','ph');p.fotos.forEach(function(s){var im=el('img');im.src=s;im.alt=p.nombre;im.loading='lazy';ph.appendChild(im)});c.appendChild(ph)}
-    c.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')));
+    c.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')+(p.top?' · ★ Más vendido':'')));
     if(p.dto>0)c.appendChild(el('span','off','-'+p.dto+'%'));
     c.appendChild(el('h3',null,p.nombre));
     c.appendChild(el('p',null,p.descripcion||''));
@@ -352,40 +373,29 @@ function addCart(p){var c=cart.filter(function(x){return x.p===p})[0],ok=false;
 function cartTotal(){return cart.reduce(function(a,c){return a+pf(c.p)*c.qty},0)}
 function updCart(){var n=cart.reduce(function(a,c){return a+c.qty},0),b=$('#cartBtn');b.hidden=!n;b.querySelector('b').textContent=n}
 $('#cartBtn').onclick=function(){openBuy()};
-function openBuy(){buy={nombre:'',metodo:'transferencia',done:false,qty:1,p:{precio:0}};renderBuy();$('#modal').classList.add('open')}
+function buyDesc(){return buy&&buy.cupon&&ME&&ME.disponibles>0?Math.round(cartTotal()*ME.desc/100):0}
+function buyTotal(){return cartTotal()-buyDesc()}
+function openBuy(){buy={nombre:ME&&!ME.adm?ME.nombre:'',telefono:'',entrega:'retiro',calle:'',localidad:'',cp:'',provincia:'',nota:'',metodo:'transferencia',cupon:false,done:false};renderBuy();$('#modal').classList.add('open')}
 function closeBuy(){$('#modal').classList.remove('open')}
 $('#modal').onclick=function(e){if(e.target===this)closeBuy()};
-function orderLink(){
-  var t='Hola! Quiero comprar:\n'+cart.map(function(c){return '• '+c.qty+' x '+c.p.nombre+' ('+fmt(pf(c.p)*c.qty)+')'}).join('\n')+'\nTotal: '+fmt(cartTotal())+'\nRetiro: en el local\nForma de pago: '+METODO[buy.metodo]+'\nNombre: '+buy.nombre;
-  return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
-function orderLinkOld(){
-  var t='Hola! Quiero comprar:\n• '+buy.qty+' x '+buy.p.nombre+' ('+fmt(buy.p.precio*buy.qty)+')\nTotal: '+fmt(buy.p.precio*buy.qty)+
-    '\nForma de pago: '+METODO[buy.metodo]+'\nNombre: '+buy.nombre;
-  return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
-function payInfo(){
-  var b=el('div','info');
-  if(buy.metodo==='transferencia'){
-    if(pago.alias){b.appendChild(el('div','lab','Alias para transferir'));b.appendChild(el('div','alias',pago.alias));
-      if(pago.titular)b.appendChild(el('div',null,'Titular: '+pago.titular));
-      var cp=el('button','btn2 ghost','Copiar alias');cp.type='button';
-      cp.onclick=function(){try{navigator.clipboard.writeText(pago.alias).then(function(){cp.textContent='¡Copiado!'},function(){cp.textContent='Copialo a mano'})}catch(e){cp.textContent='Copialo a mano'}};b.appendChild(cp);
-      b.appendChild(el('div',null,'Transferí '+fmt(cartTotal())+' y enviá el comprobante por WhatsApp.')).style.marginTop='12px'}
-    else b.textContent='Te pasamos el alias por WhatsApp al confirmar la compra.'}
-  else if(buy.metodo==='efectivo'){b.textContent='Pagás en efectivo cuando retirás tu pedido en el local. Coordinamos el momento por WhatsApp (showroom con reserva previa).'}
-  else{
-    if(pago.qr){b.appendChild(el('div','lab','Escaneá para pagar'));var im=el('img');im.src=pago.qr;im.alt='Código QR de pago';b.appendChild(im);
-      b.appendChild(el('div',null,'Pagá '+fmt(cartTotal())+' y enviá el comprobante por WhatsApp.'))}
-    else b.textContent='Te enviamos el QR de pago por WhatsApp al confirmar la compra.'}
+function payInfo(){var b=el('div','info');
+  if(buy.metodo==='transferencia')b.textContent='Te pasamos el alias por WhatsApp al confirmar. Total a transferir: '+fmt(buyTotal())+'.';
+  else b.textContent=buy.entrega==='envio'?'Pagás en efectivo al recibir tu pedido. Coordinamos los detalles por WhatsApp.':'Pagás en efectivo cuando retirás tu pedido en el local. Coordinamos el momento por WhatsApp.';
   return b}
-function renderBuy(){
-  var s=$('#sheet');s.innerHTML='';
-  var h=el('div','dh');h.appendChild(el('h3','gold','TU CARRITO'));
+function waLink(p){var d=buy.entrega==='envio'?'Envío a: '+[buy.calle,buy.localidad,'CP '+buy.cp,buy.provincia].filter(function(x){return x&&x.trim()}).join(', ')+(buy.nota?' (Nota: '+buy.nota+')':'')+'\nEl costo del envío me lo confirman por acá.':'Retiro en el local';
+  var t='Hola! Hice el pedido #'+p.id+' en la web:\n'+p.lineas.map(function(l){return '• '+l.qty+' x '+l.nombre+' ('+fmt(l.sub)+')'}).join('\n')
+   +'\nSubtotal: '+fmt(p.subtotal)+(p.descuento>0?'\nDescuento por puntos: -'+fmt(p.descuento):'')+'\nTotal: '+fmt(p.total)
+   +'\nEntrega: '+d+'\nForma de pago: '+METODO[buy.metodo]+'\nNombre: '+buy.nombre+'\nTeléfono: '+buy.telefono;
+  return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
+function sheetOpen(title){var s=$('#sheet');s.innerHTML='';var h=el('div','dh');h.appendChild(el('h3','gold',title));
   var x=el('button','x','✕');x.type='button';x.setAttribute('aria-label','Cerrar');x.onclick=closeBuy;h.appendChild(x);s.appendChild(h);
-  var b=el('div','sb');s.appendChild(b);
-  if(buy.done){
-    var d=el('div','done');d.appendChild(el('b','gold','¡GRACIAS POR TU COMPRA!'));
-    d.appendChild(el('div',null,'Se abrió WhatsApp con el detalle de tu pedido. Enviá el mensaje y coordinamos todo por ahí.'));
-    var k=el('button','btn2','Seguir mirando');k.type='button';k.onclick=closeBuy;d.appendChild(k);b.appendChild(d);return}
+  var b=el('div','sb');s.appendChild(b);$('#modal').classList.add('open');return b}
+function renderBuy(){
+  var b=sheetOpen('TU CARRITO');
+  if(buy.done){var p=buy.pedido,d=el('div','done');d.appendChild(el('b','gold','¡PEDIDO #'+p.id+' REGISTRADO!'));
+    d.appendChild(el('div',null,'Total: '+fmt(p.total)+'. Ahora enviá el pedido por WhatsApp para que lo confirmemos.'));
+    var w=el('a','btn2','Enviar pedido por WhatsApp');w.target='_blank';w.rel='noopener';w.href=waLink(p);d.appendChild(w);
+    var k=el('button','btn2 ghost','Seguir mirando');k.type='button';k.onclick=closeBuy;d.appendChild(k);b.appendChild(d);return}
   if(!cart.length){var e0=el('div','done','Tu carrito está vacío.');var k0=el('button','btn2','Ver perfumes');k0.type='button';k0.onclick=closeBuy;e0.appendChild(k0);b.appendChild(e0);return}
   cart.forEach(function(c){
     var pr=el('div','prod'),i=el('div');i.appendChild(el('b',null,c.p.nombre));i.appendChild(el('span',null,fmt(pf(c.p))+' c/u'));pr.appendChild(i);
@@ -393,59 +403,96 @@ function renderBuy(){
     m.onclick=function(){c.qty--;if(c.qty<1)cart.splice(cart.indexOf(c),1);updCart();renderBuy()};
     pl.onclick=function(){if(c.qty<stockOf(c.p)){c.qty++;updCart()}renderBuy()};
     q.appendChild(m);q.appendChild(el('span',null,String(c.qty)));q.appendChild(pl);pr.appendChild(q);b.appendChild(pr)});
-  var t=el('div','total');t.appendChild(el('span',null,'Total'));t.appendChild(el('span','gold',fmt(cartTotal())));b.appendChild(t);
-  b.appendChild(el('div','info','Retiro únicamente en el local (Franck, Santa Fe), con reserva previa. No hacemos envíos.'));
-  b.appendChild(el('div','lab','Tu nombre'));
-  var nm=el('input','fld');nm.placeholder='Nombre y apellido';nm.value=buy.nombre;b.appendChild(nm);
-  b.appendChild(el('div','lab','Forma de pago'));
-  var opts=el('div','opts');
-  [['transferencia','Transferencia','Te pasamos el alias por WhatsApp'],['efectivo','Efectivo','Pagás al retirar en el local']].forEach(function(o){
-    var lb=el('label','opt'+(buy.metodo===o[0]?' sel':'')),rd=el('input');rd.type='radio';rd.name='metodo';rd.checked=buy.metodo===o[0];
-    rd.onchange=function(){buy.nombre=nm.value.trim();buy.metodo=o[0];renderBuy()};
-    var tx=el('div');tx.appendChild(el('b',null,o[1]));tx.appendChild(el('small',null,o[2]));lb.appendChild(rd);lb.appendChild(tx);opts.appendChild(lb)});
-  b.appendChild(opts);b.appendChild(payInfo());
-  var ok=el('a','btn2','Confirmar compra por WhatsApp');ok.target='_blank';ok.rel='noopener';
-  function sync(){buy.nombre=nm.value.trim();ok.href=buy.nombre?orderLink():'#'}
-  nm.oninput=sync;sync();
-  ok.onclick=function(e){if(!buy.nombre){e.preventDefault();nm.focus();nm.style.borderColor='var(--gold)';return}
-    setTimeout(function(){buy.done=true;cart=[];updCart();renderBuy()},400)};
+  if(buyDesc()>0){var dd=el('div','total');dd.appendChild(el('span',null,'Descuento por puntos ('+ME.desc+'%)'));dd.appendChild(el('span','gold','-'+fmt(buyDesc())));b.appendChild(dd)}
+  var t=el('div','total');t.appendChild(el('span',null,'Total'));t.appendChild(el('span','gold',fmt(buyTotal())));b.appendChild(t);
+  if(ME&&!ME.adm&&ME.disponibles>0){
+    var cl=el('label','opt'+(buy.cupon?' sel':'')),ck=el('input'),tx=el('div');ck.type='checkbox';ck.checked=buy.cupon;ck.onchange=function(){buy.cupon=ck.checked;renderBuy()};
+    tx.appendChild(el('b',null,'Usar mi '+ME.desc+'% de descuento'));tx.appendChild(el('small',null,'Tenés '+ME.disponibles+(ME.disponibles>1?' disponibles':' disponible')));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
+  else if(!ME){var li=el('button','btn2 ghost','Ingresá para sumar puntos y descuentos');li.type='button';li.onclick=function(){openAccount(function(){renderBuy()})};b.appendChild(li)}
+  function bi(label,key,type,ph,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';i.value=buy[key]||'';if(ph)i.placeholder=ph;if(ac)i.autocomplete=ac;i.oninput=function(){buy[key]=i.value};b.appendChild(i)}
+  bi('Tu nombre','nombre','text','Nombre y apellido','name');
+  bi('Teléfono (WhatsApp)','telefono','tel','Ej: 342 5123456','tel');
+  function opts(title,list,key,after){b.appendChild(el('div','lab',title));var o=el('div','opts');
+    list.forEach(function(x){var lb=el('label','opt'+(buy[key]===x[0]?' sel':'')),rd=el('input'),tx=el('div');rd.type='radio';rd.name=key;rd.checked=buy[key]===x[0];
+      rd.onchange=function(){buy[key]=x[0];renderBuy()};tx.appendChild(el('b',null,x[1]));tx.appendChild(el('small',null,x[2]));lb.appendChild(rd);lb.appendChild(tx);o.appendChild(lb)});b.appendChild(o)}
+  opts('Entrega',[['retiro','Retiro en el local','Franck, Santa Fe'],['envio','Envío a domicilio','Te confirmamos el costo por WhatsApp']],'entrega');
+  if(buy.entrega==='envio'){
+    bi('Calle y número','calle','text','Ej: San Martín 123','street-address');bi('Localidad','localidad','text','','address-level2');
+    bi('Código postal','cp','text','','postal-code');bi('Provincia','provincia','text','Santa Fe','address-level1');bi('Referencias o notas (opcional)','nota','text','Piso, timbre, horario…');
+    b.appendChild(el('div','info','El costo del envío lo calcula el local y te lo confirma por WhatsApp.'))}
+  opts('Forma de pago',[['transferencia','Transferencia','Te pasamos el alias por WhatsApp'],['efectivo','Efectivo',buy.entrega==='envio'?'Pagás al recibir':'Pagás al retirar en el local']],'metodo');
+  b.appendChild(payInfo());
+  var pv=el('div','info');pv.appendChild(document.createTextNode('Usamos tus datos solo para gestionar este pedido. '));
+  var pa=el('a',null,'Política de privacidad');pa.onclick=function(){openPriv(renderBuy)};pv.appendChild(pa);b.appendChild(pv);
+  var em=el('div','lab');b.appendChild(em);
+  var ok=el('button','btn2','Confirmar pedido');ok.type='button';
+  ok.onclick=function(){var tel=(buy.telefono||'').replace(/\D/g,''),n=(buy.nombre||'').trim(),er='';
+    if(!n)er='Escribí tu nombre.';else if(tel.length<8)er='Escribí un teléfono válido.';
+    else if(buy.entrega==='envio'&&(!(buy.calle||'').trim()||!(buy.localidad||'').trim()||!(buy.cp||'').trim()))er='Completá la dirección de envío.';
+    if(er){em.textContent=er;return}
+    ok.disabled=true;em.textContent='Registrando tu pedido…';
+    api('pedidos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:n,telefono:buy.telefono,entrega:buy.entrega,
+      direccion:buy.entrega==='envio'?{calle:buy.calle,localidad:buy.localidad,cp:buy.cp,provincia:buy.provincia,nota:buy.nota}:null,
+      metodo:buy.metodo,cupon:!!buy.cupon,items:cart.map(function(c){return{id:c.p.id,qty:c.qty}})})})
+    .then(function(p){buy.nombre=n;buy.done=true;buy.pedido=p;cart=[];updCart();loadMe();renderBuy();
+      try{window.open($('#sheet a.btn2').href,'_blank','noopener')}catch(e){}})
+    .catch(function(e){ok.disabled=false;em.textContent=e.message||'No se pudo registrar el pedido.'})};
   b.appendChild(ok)}
-function renderBuyOld(){
-  var s=$('#sheet');s.innerHTML='';
-  var h=el('div','dh');h.appendChild(el('h3','gold','FINALIZAR COMPRA'));
-  var x=el('button','x','✕');x.type='button';x.setAttribute('aria-label','Cerrar');x.onclick=closeBuy;h.appendChild(x);s.appendChild(h);
-  var b=el('div','sb');s.appendChild(b);
-  if(buy.done){
-    var d=el('div','done');d.appendChild(el('b','gold','¡GRACIAS POR TU COMPRA!'));
-    d.appendChild(el('div',null,'Se abrió WhatsApp con el detalle de tu pedido. Enviá el mensaje y coordinamos todo por ahí.'));
-    var k=el('button','btn2','Seguir mirando');k.type='button';k.onclick=closeBuy;d.appendChild(k);b.appendChild(d);return}
-  var pr=el('div','prod'),i=el('div');i.appendChild(el('b',null,buy.p.nombre));i.appendChild(el('span',null,fmt(buy.p.precio)+' c/u'));pr.appendChild(i);
-  var q=el('div','qty'),m=el('button',null,'−'),pl=el('button',null,'+');m.type=pl.type='button';
-  m.onclick=function(){if(buy.qty>1){buy.qty--;renderBuy()}};pl.onclick=function(){buy.qty++;renderBuy()};
-  q.appendChild(m);q.appendChild(el('span',null,String(buy.qty)));q.appendChild(pl);pr.appendChild(q);b.appendChild(pr);
-  var t=el('div','total');t.appendChild(el('span',null,'Total'));t.appendChild(el('span','gold',fmt(buy.p.precio*buy.qty)));b.appendChild(t);
-  b.appendChild(el('div','lab','Tu nombre'));
-  var nm=el('input','fld');nm.placeholder='Nombre y apellido';nm.value=buy.nombre;b.appendChild(nm);
-  b.appendChild(el('div','lab','Forma de pago'));
-  var opts=el('div','opts');
-  [['transferencia','Transferencia','Te pasamos el alias por WhatsApp'],['efectivo','Efectivo','Pagás al retirar en el local']].forEach(function(o){
-    var lb=el('label','opt'+(buy.metodo===o[0]?' sel':'')),rd=el('input');rd.type='radio';rd.name='metodo';rd.checked=buy.metodo===o[0];
-    rd.onchange=function(){buy.nombre=nm.value.trim();buy.metodo=o[0];renderBuy()};
-    var tx=el('div');tx.appendChild(el('b',null,o[1]));tx.appendChild(el('small',null,o[2]));lb.appendChild(rd);lb.appendChild(tx);opts.appendChild(lb)});
-  b.appendChild(opts);b.appendChild(payInfo());
-  var ok=el('a','btn2','Confirmar compra por WhatsApp');ok.target='_blank';ok.rel='noopener';
-  function sync(){buy.nombre=nm.value.trim();ok.href=buy.nombre?orderLink():'#'}
-  nm.oninput=sync;sync();
-  ok.onclick=function(e){if(!buy.nombre){e.preventDefault();nm.focus();nm.style.borderColor='var(--gold)';return}
-    setTimeout(function(){buy.done=true;renderBuy()},400)};
-  b.appendChild(ok)}
+/* cuenta y privacidad */
+function openPriv(back){var b=sheetOpen('POLÍTICA DE PRIVACIDAD');b.className='sb pol';
+  [['Responsable','Rumat Parfums, Franck, Santa Fe. Contacto por WhatsApp o por Instagram (@rumat.parfums).'],
+   ['Qué datos pedimos','Nombre, teléfono, correo electrónico (solo si creás una cuenta), contraseña (se guarda cifrada y nadie puede verla), dirección de entrega (solo si elegís envío) y el detalle de tus pedidos.'],
+   ['Para qué los usamos','Para gestionar tus pedidos, coordinar el pago y la entrega por WhatsApp, y llevar tus puntos y descuentos. Usamos tu correo solo para tu cuenta. No vendemos tus datos ni te enviamos publicidad sin tu consentimiento.'],
+   ['Dónde se guardan','En servidores de proveedores externos (Neon para la base de datos y Vercel para el sitio), que pueden estar fuera de la Argentina.'],
+   ['Tus derechos','Podés pedirnos acceder a tus datos, corregirlos o eliminar tu cuenta escribiéndonos por WhatsApp. La Agencia de Acceso a la Información Pública es el organismo de control de la Ley 25.326 de Protección de los Datos Personales y atiende los reclamos.'],
+   ['Cuánto tiempo','Mientras tengas una cuenta o haya pedidos para gestionar. Podés pedir la baja cuando quieras.']]
+  .forEach(function(x){var p=el('p');p.appendChild(el('b',null,x[0]+'. '));p.appendChild(document.createTextNode(x[1]));b.appendChild(p)});
+  var v=el('button','btn2','Volver');v.type='button';v.onclick=function(){back?back():closeBuy()};b.appendChild(v)}
+function openAccount(after,tab){
+  var b=sheetOpen(ME?'MI CUENTA':'TU CUENTA');
+  if(ME){b.appendChild(el('div','info',ME.nombre+(ME.email?' · '+ME.email:'')));
+    if(ME.adm){var g=el('button','btn2','Ir al administrador');g.type='button';g.onclick=function(){closeBuy();location.hash='admin'};b.appendChild(g)}
+    else{b.appendChild(el('div','lab','Tus puntos'));var pr=el('div','prog'),bar=el('i');bar.style.width=Math.round((ME.meta-ME.falta)/ME.meta*100)+'%';pr.appendChild(bar);b.appendChild(pr);
+      b.appendChild(el('div',null,'Compras confirmadas: '+fmt(ME.gasto)+'. Te faltan '+fmt(ME.falta)+' para ganar un '+ME.desc+'% de descuento.'));
+      b.appendChild(el('div','info','Descuentos disponibles: '+ME.disponibles+(ME.disponibles?'. Lo podés usar en tu próximo carrito.':'')))}
+    var o=el('button','btn2 ghost','Cerrar sesión');o.type='button';o.onclick=function(){setTok('');ME=null;showMe();if(location.hash==='#admin')location.hash='';closeBuy()};b.appendChild(o);return}
+  var reg=tab==='reg',row=el('div','opts');
+  [['in','Ingresar'],['reg','Crear cuenta']].forEach(function(t){var k=el('button','chip',t[1]);k.type='button';k.setAttribute('aria-pressed',(t[0]==='reg')===reg);k.onclick=function(){openAccount(after,t[0])};row.appendChild(k)});b.appendChild(row);
+  b.appendChild(el('div','info','Tener cuenta es opcional: sirve para sumar puntos y descuentos. Podés comprar sin cuenta.'));
+  var F={};function bi(label,key,type,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';if(ac)i.autocomplete=ac;F[key]=i;b.appendChild(i)}
+  if(reg)bi('Tu nombre','nombre','text','name');bi('Correo electrónico','email','email','email');bi('Contraseña'+(reg?' (mínimo 8 caracteres)':''),'password','password',reg?'new-password':'current-password');
+  var ck;if(reg){var cl=el('label','opt'),tx=el('div');ck=el('input');ck.type='checkbox';tx.appendChild(document.createTextNode('Acepto la '));var a=el('a',null,'Política de privacidad');a.onclick=function(e){e.preventDefault();openPriv(function(){openAccount(after,'reg')})};tx.appendChild(a);tx.appendChild(el('small',null,'Usamos tu correo solo para tu cuenta y tus puntos.'));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
+  var em=el('div','lab');b.appendChild(em);var go=el('button','btn2',reg?'Crear cuenta':'Ingresar');go.type='button';
+  go.onclick=function(){go.disabled=true;em.textContent='Un momento…';
+    api(reg?'registro':'login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:F.email.value,password:F.password.value,nombre:reg?F.nombre.value:undefined,acepta:reg?ck.checked:undefined})})
+    .then(function(j){setTok(j.token);return loadMe()}).then(function(){if(after)after();else openAccount()})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo.'})};b.appendChild(go)}
+/* pedidos (administrador) */
+var PED=[],pedEst='pendiente';
+function loadPedidos(box,cached){box.innerHTML='';box.appendChild(el('h4',null,'PEDIDOS'));
+  if(!cached){box.appendChild(el('small',null,'Cargando…'));api('pedidos').then(function(r){PED=r.pedidos||[];loadPedidos(box,true)}).catch(function(e){box.appendChild(el('small',null,e.message))});return}
+  var tabs=el('div','opts');[['pendiente','Pendientes'],['pagado','Pagados'],['cancelado','Cancelados'],['todos','Todos']].forEach(function(t){var k=el('button','chip',t[1]);k.type='button';k.setAttribute('aria-pressed',pedEst===t[0]);k.onclick=function(){pedEst=t[0];loadPedidos(box,true)};tabs.appendChild(k)});
+  var rf=el('button','sm','Actualizar');rf.type='button';rf.onclick=function(){loadPedidos(box)};tabs.appendChild(rf);box.appendChild(tabs);
+  var L=PED.filter(function(p){return pedEst==='todos'||p.estado===pedEst});
+  if(!L.length)box.appendChild(el('small',null,'No hay pedidos en esta lista.'));
+  L.forEach(function(p){var r=el('div','lrow'),i=el('div'),d=p.direccion||{};
+    i.appendChild(el('b',null,'#'+p.id+' · '+p.nombre+' · '+p.telefono));
+    i.appendChild(el('small',null,p.items.map(function(x){return x.qty+' x '+x.nombre}).join(', ')));
+    i.appendChild(el('small',null,p.entrega==='envio'?'Envío: '+[d.calle,d.localidad,'CP '+d.cp,d.provincia].filter(Boolean).join(', ')+(d.nota?' · Nota: '+d.nota:''):'Retiro en el local'));
+    i.appendChild(el('small',null,'Total '+fmt(p.total)+(p.descuento>0?' (con '+fmt(p.descuento)+' de descuento por puntos)':'')+' · '+METODO[p.metodo]+' · '+new Date(p.creado).toLocaleString('es-AR')+' · '+p.estado.toUpperCase()));
+    if(p.u_email)i.appendChild(el('small',null,'Cuenta: '+p.u_nombre+' ('+p.u_email+') · acumulado pagado '+fmt(p.u_gasto)));
+    r.appendChild(i);
+    if(p.estado==='pendiente'){var a=el('div','acts');
+      [['Marcar pagado','sm','pagado'],['Cancelar','sm red','cancelado']].forEach(function(x){var k=el('button',x[1],x[0]);k.type='button';
+        k.onclick=function(){if(k.dataset.s){api('pedidos/'+p.id+'/estado',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({estado:x[2]})}).then(function(){loadPedidos(box)}).catch(function(e){k.textContent=e.message})}
+          else{k.dataset.s='1';k.textContent='¿Seguro?';setTimeout(function(){k.dataset.s='';k.textContent=x[0]},3000)}};a.appendChild(k)});r.appendChild(a)}
+    box.appendChild(r)})}
 
-/* administrador */
 function flag(v){try{v?sessionStorage.setItem('rumat_admin','1'):sessionStorage.removeItem('rumat_admin')}catch(e){}}
 function route(){
-  var open=isAdmin&&location.hash==='#admin';
-  $('#adminView').classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';
-  if(open){gate(function(){flag(true);renderAdmin()})}}
+  var want=location.hash==='#admin',open=want&&ME&&ME.adm;
+  $('#adminView').classList.toggle('open',!!open);document.body.style.overflow=open?'hidden':'';
+  if(open)renderAdmin();else if(want)location.hash=''}
 addEventListener('hashchange',route);
 /* detalle de perfume */
 function closeDetail(){location.hash=''}
@@ -458,7 +505,7 @@ function openDetail(p){
     if(fs.length>1){var th=el('div','dth');fs.forEach(function(s,k){var t=el('img');t.src=s;t.alt=p.nombre+' '+(k+1);if(!k)t.className='on';
       t.onclick=function(){main.src=s;th.querySelectorAll('img').forEach(function(x){x.classList.remove('on')});t.classList.add('on')};th.appendChild(t)});L.appendChild(th)}
   }else L.appendChild(el('div','dnone','Sin fotos todavía'));
-  R.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')));
+  R.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')+(p.top?' · ★ Más vendido':'')));
   R.appendChild(el('h2','gold',p.nombre));
   var pr=el('div','dprice');if(p.dto>0)pr.appendChild(el('s',null,fmt(p.precio)));pr.appendChild(el('span','gold',fmt(pf(p))));
   if(p.dto>0)pr.appendChild(el('span','off2','-'+p.dto+'% OFF'));R.appendChild(pr);
@@ -482,6 +529,7 @@ function renderAdmin(){
   var w=el('div','aw');v.appendChild(w);
   var h=el('div','ah');h.appendChild(el('h2','gold','ADMINISTRADOR'));
   var bk=el('button','back','← Volver a la tienda');bk.type='button';bk.onclick=function(){flag(false);editId=null;location.hash=''};h.appendChild(bk);w.appendChild(h);
+  var op=el('div','panel');w.appendChild(op);loadPedidos(op);
   var ed=data.filter(function(p){return p.id===editId})[0];
   var pn=el('div','panel');pn.appendChild(el('h4',null,ed?'EDITAR PERFUME':'CARGAR PERFUME'));
   var f=document.createElement('form');
@@ -491,18 +539,19 @@ function renderAdmin(){
   var precio=el('input');precio.type='number';precio.min='0';precio.step='any';precio.required=true;precio.placeholder='0';precio.value=ed?ed.precio:'';
   var desc=el('textarea');desc.rows=4;desc.placeholder='Notas, duración, para qué ocasión…';desc.value=ed?ed.descripcion:'';
   var marca=el('input');marca.placeholder='Ej: Lattafa';marca.value=ed&&ed.marca?ed.marca:'';
+  var tp=el('input');tp.type='checkbox';tp.checked=!!(ed&&ed.top);var tl=el('label','chk');tl.appendChild(tp);tl.appendChild(document.createTextNode(' Marcar como más vendido'));
   var stk=el('input');stk.type='number';stk.min='0';stk.placeholder='Vacío = sin límite';stk.value=ed&&ed.stock!=null?ed.stock:'';
   var dsc=el('input');dsc.type='number';dsc.min='0';dsc.max='90';dsc.placeholder='0 = sin descuento';dsc.value=ed&&ed.dto?ed.dto:'';
   var fotos=ed&&ed.fotos?ed.fotos.slice():[],pw=el('div','pv'),fi=el('input'),fd=el('div');fi.type='file';fi.accept='image/*';fi.multiple=true;
   function drawPv(){pw.innerHTML='';fotos.forEach(function(s,k){var t=el('div','pt'),im=el('img'),x=el('button',null,'×');im.src=s;x.type='button';x.onclick=function(){fotos.splice(k,1);drawPv()};t.appendChild(im);t.appendChild(x);pw.appendChild(t)})}
   fi.onchange=function(){Array.from(fi.files).forEach(function(fl){readImg(fl,900).then(function(u){fotos.push(u);drawPv()})});fi.value=''};
   drawPv();fd.appendChild(fi);fd.appendChild(pw);
-  field('Nombre del perfume',nombre);field('Marca',marca);field('Categoría',gen);field('Precio ($)',precio);field('Descuento (%)',dsc);field('Stock (unidades)',stk);field('Fotos (podés sumar varias)',fd,true);field('Descripción',desc,true);
+  field('Nombre del perfume',nombre);field('Marca',marca);field('Categoría',gen);field('Precio ($)',precio);field('Descuento (%)',dsc);field('Stock (unidades)',stk);field('Más vendidos',tl);field('Fotos (podés sumar varias)',fd,true);field('Descripción',desc,true);
   var act=el('div','full'),go=el('button','go',ed?'Guardar cambios':'Agregar perfume');go.type='submit';act.appendChild(go);
   if(ed){var cc=el('button','cancel','Cancelar');cc.type='button';cc.onclick=function(){editId=null;renderAdmin()};act.appendChild(cc)}
   f.appendChild(act);
   f.onsubmit=function(e){e.preventDefault();
-    var o={nombre:nombre.value.trim(),marca:marca.value.trim(),genero:gen.value,precio:Number(precio.value),stock:stk.value===''?null:Math.max(0,Math.floor(Number(stk.value)||0)),dto:Math.min(90,Math.max(0,Number(dsc.value)||0)),fotos:fotos,descripcion:desc.value.trim()};
+    var o={nombre:nombre.value.trim(),marca:marca.value.trim(),genero:gen.value,precio:Number(precio.value),stock:stk.value===''?null:Math.max(0,Math.floor(Number(stk.value)||0)),dto:Math.min(90,Math.max(0,Number(dsc.value)||0)),fotos:fotos,descripcion:desc.value.trim(),top:tp.checked};
     if(ed){Object.assign(ed,o)}else{o.id=Date.now().toString(36);data.push(o)}
     editId=null;save('Guardando…')};
   pn.appendChild(f);w.appendChild(pn);
@@ -510,10 +559,11 @@ function renderAdmin(){
   if(!data.length)lp.appendChild(el('small',null,'Todavía no cargaste ningún perfume.'));
   data.slice().reverse().forEach(function(p){
     var r=el('div','lrow'),i=el('div');i.appendChild(el('b',null,p.nombre));
-    i.appendChild(el('small',null,LABEL[p.genero]+(p.marca?' · '+p.marca:'')+' · '+fmt(p.precio)+(p.dto>0?' → '+fmt(pf(p))+' (-'+p.dto+'%)':'')+(p.fotos&&p.fotos.length?' · '+p.fotos.length+' foto(s)':'')+(p.stock!=null?' · stock: '+p.stock:'')));if(p.descripcion)i.appendChild(el('small',null,p.descripcion));r.appendChild(i);
+    i.appendChild(el('small',null,LABEL[p.genero]+(p.marca?' · '+p.marca:'')+' · '+fmt(p.precio)+(p.dto>0?' → '+fmt(pf(p))+' (-'+p.dto+'%)':'')+(p.fotos&&p.fotos.length?' · '+p.fotos.length+' foto(s)':'')+(p.stock!=null?' · stock: '+p.stock:'')+(p.top?' · ★ más vendido':'')));if(p.descripcion)i.appendChild(el('small',null,p.descripcion));r.appendChild(i);
     var a=el('div','acts'),e1=el('button','sm','Editar'),e2=el('button','sm red','Eliminar');e1.type=e2.type='button';
     e1.onclick=function(){editId=p.id;renderAdmin();v.scrollTop=0};
     e2.onclick=function(){if(e2.dataset.s){data=data.filter(function(x){return x.id!==p.id});save('Eliminando…')}else{e2.dataset.s='1';e2.textContent='¿Seguro?';setTimeout(function(){e2.dataset.s='';e2.textContent='Eliminar'},3000)}};
+    var e4=el('button','sm',p.top?'Quitar ★':'★ Más vendido');e4.type='button';e4.onclick=function(){p.top=!p.top;save('Guardando…')};a.appendChild(e4);
     if(p.dto>0){var e3=el('button','sm','Quitar desc.');e3.type='button';e3.onclick=function(){p.dto=0;save('Guardando…')};a.appendChild(e3)}
     a.appendChild(e1);a.appendChild(e2);r.appendChild(a);lp.appendChild(r)});
   w.appendChild(lp);
@@ -531,21 +581,6 @@ function renderAdmin(){
   vids.forEach(function(s,k){var rb2=el('button','sm red','Quitar video '+(k+1));rb2.type='button';rb2.style.cssText='margin:10px 8px 0 0';rb2.onclick=function(){vids.splice(k,1);save('Guardando…')};vp.appendChild(rb2)});
   w.appendChild(vp);var m=el('div');m.id='amsg';w.appendChild(m)}
 
-function gate(cb){
-  if(TOKEN){cb();return}
-  var v=$('#adminView');v.innerHTML='';var w=el('div','aw'),pn=el('div','panel');w.appendChild(pn);v.appendChild(w);
-  pn.appendChild(el('h4',null,'ACCESO AL ADMINISTRADOR'));
-  var f=document.createElement('form'),i=el('input');i.type='password';i.required=true;i.placeholder='Contraseña';i.autocomplete='current-password';
-  var d=el('div','full');d.appendChild(i);f.appendChild(d);
-  var d2=el('div','full'),go=el('button','go','Entrar');go.type='submit';d2.appendChild(go);
-  var bk=el('button','cancel','Volver');bk.type='button';bk.onclick=function(){flag(false);location.hash=''};d2.appendChild(bk);f.appendChild(d2);
-  var m=el('div');m.id='amsg';f.appendChild(m);pn.appendChild(f);
-  f.onsubmit=function(e){e.preventDefault();m.textContent='Verificando…';
-    fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:i.value})})
-      .then(function(r){return r.json().then(function(j){return{ok:r.ok,j:j}})})
-      .then(function(x){if(x.ok){TOKEN=x.j.token;try{sessionStorage.setItem('rumat_tk',TOKEN)}catch(e){}cb()}else m.textContent=x.j.error||'No se pudo entrar.'})
-      .catch(function(){m.textContent='No se pudo conectar.'})}}
-
 async function save(text){var m=$('#amsg');if(m)m.textContent=text;
   try{await api('store',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:data,portada:portada,videos:vids})});
     renderChips();renderGrid();showCover();showVids();renderAdmin();var m2=$('#amsg');if(m2)m2.textContent='Guardado \u2713'}
@@ -561,15 +596,25 @@ async function save(text){var m=$('#amsg');if(m)m.textContent=text;
     document.body.appendChild(a);a.click();a.remove();m.textContent='Se abrió WhatsApp: enviá el mensaje y te contactamos.'}})();
 
 /* conexión con el servidor */
-var TOKEN='';try{TOKEN=sessionStorage.getItem('rumat_tk')||''}catch(e){}
+var TOKEN='';try{TOKEN=localStorage.getItem('rumat_tk')||''}catch(e){}
+function setTok(t){TOKEN=t||'';try{t?localStorage.setItem('rumat_tk',t):localStorage.removeItem('rumat_tk')}catch(e){}}
 function api(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers);if(TOKEN)opt.headers.Authorization='Bearer '+TOKEN;
-  return fetch('/api/'+path,opt).then(function(r){if(r.status===401){TOKEN='';try{sessionStorage.removeItem('rumat_tk')}catch(e){}}
-    if(!r.ok)throw new Error('http '+r.status);return r.json()})}
+  return fetch('/api/'+path,opt).then(function(r){return r.json().catch(function(){return{}}).then(function(j){
+    if(r.status===401&&TOKEN&&path!=='login'){setTok('');ME=null;showMe()}
+    if(!r.ok){var e=new Error(j.error||'Error '+r.status);e.status=r.status;throw e}return j})})}
 function up(blob,type){return fetch('/api/media',{method:'POST',headers:{'Content-Type':type,Authorization:'Bearer '+TOKEN},body:blob})
   .then(function(r){if(!r.ok)throw new Error('up');return r.json()}).then(function(j){return j.url})}
-api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
-  .catch(function(){var c=$('#count');if(c)c.textContent='No se pudo cargar el cat\u00e1logo. Recarg\u00e1 la p\u00e1gina.'})
-  .then(function(){showCover();showVids();renderChips();renderGrid();route();routeD()});
+function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ingresar';$('#adminBtn').hidden=!(ME&&ME.adm)}
+function loadMe(){if(!TOKEN){ME=null;showMe();return Promise.resolve()}return api('yo').then(function(m){ME=m}).catch(function(){ME=null}).then(showMe)}
+$('#userBtn').onclick=function(){openAccount()};
+$('#busq').oninput=function(){busq=this.value;renderGrid()};
+$('#orden').onchange=function(){orden=this.value;renderGrid()};
+$('#privLink').onclick=function(e){e.preventDefault();openPriv()};
+Promise.all([
+  api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
+    .catch(function(){var c=$('#count');if(c)c.textContent='No se pudo cargar el catálogo. Recargá la página.'}),
+  loadMe()
+]).then(function(){showCover();showVids();renderChips();renderGrid();route();routeD()});
 })();
 </script>
 
