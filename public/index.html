@@ -231,6 +231,18 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 .sb a{color:var(--gold2);text-decoration:underline;cursor:pointer}
 .pol p{margin:0 0 12px;font-size:.92rem;line-height:1.55;color:var(--muted)}
 .pol b{color:var(--gold2)}
+.tools{position:relative;z-index:15}
+.dd{position:relative;flex:0 1 250px}
+.ddb{width:100%;height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);padding:0 18px;font-family:var(--sans);font-size:.9rem;cursor:pointer;transition:border-color .2s}
+.ddb:hover,.ddb[aria-expanded="true"]{border-color:var(--gold)}
+.ddb svg{flex:none;transition:transform .25s}
+.ddb[aria-expanded="true"] svg{transform:rotate(180deg)}
+.ddl{position:absolute;z-index:30;top:calc(100% + 8px);left:0;right:0;margin:0;padding:6px;list-style:none;border-radius:18px;border:1px solid var(--gold3,var(--line));background:#17100a;box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.ddl[hidden]{display:none}
+.ddl li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;border-radius:12px;color:var(--text);font-family:var(--sans);font-size:.9rem;cursor:pointer}
+.ddl li.act{background:rgba(255,255,255,.08);color:var(--gold2)}
+.ddl li[aria-selected="true"]{color:var(--gold2)}
+.ddl li[aria-selected="true"]::after{content:"✓";color:var(--gold)}
 </style>
 </head>
 <body>
@@ -254,7 +266,7 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
   <div class="wrap"><div class="reveal"><div class="orn"><b></b></div><h2 class="gold">La colección</h2><p class="lead">Elegí tu esencia</p></div></div>
   <div class="bar"><div class="wrap"><div id="chips"></div></div></div>
   <div class="wrap">
-    <div class="tools"><input id="busq" type="search" placeholder="Buscar perfume o marca" aria-label="Buscar perfume o marca"><select id="orden" aria-label="Ordenar por precio"><option value="">Ordenar por precio</option><option value="asc">Menor a mayor</option><option value="desc">Mayor a menor</option></select></div>
+    <div class="tools"><input id="busq" type="search" placeholder="Buscar perfume o marca" aria-label="Buscar perfume o marca"><div class="dd" id="orden"><button type="button" class="ddb" aria-haspopup="listbox" aria-expanded="false" aria-label="Ordenar por precio"><span id="ordenTxt">Ordenar por precio</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><ul class="ddl" role="listbox" hidden><li role="option" data-v="" aria-selected="true">Predeterminado</li><li role="option" data-v="asc" aria-selected="false">Precio: menor a mayor</li><li role="option" data-v="desc" aria-selected="false">Precio: mayor a menor</li></ul></div></div>
     <div class="count" id="count"></div><div id="grid"></div></div>
 </main>
 
@@ -608,7 +620,17 @@ function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ing
 function loadMe(){if(!TOKEN){ME=null;showMe();return Promise.resolve()}return api('yo').then(function(m){ME=m}).catch(function(){ME=null}).then(showMe)}
 $('#userBtn').onclick=function(){openAccount()};
 $('#busq').oninput=function(){busq=this.value;renderGrid()};
-$('#orden').onchange=function(){orden=this.value;renderGrid()};
+(function(){var dd=$('#orden'),btn=dd.querySelector('.ddb'),ul=dd.querySelector('.ddl'),txt=$('#ordenTxt'),items=[].slice.call(ul.children),sel=0,hi=0;
+  function paint(){items.forEach(function(x,i){x.classList.toggle('act',i===hi)})}
+  function open(v){ul.hidden=!v;btn.setAttribute('aria-expanded',v?'true':'false');if(v){hi=sel;paint()}}
+  function pick(i){sel=i;orden=items[i].dataset.v;txt.textContent=i?items[i].textContent:'Ordenar por precio';items.forEach(function(x,j){x.setAttribute('aria-selected',j===i?'true':'false')});open(false);renderGrid()}
+  btn.onclick=function(){open(ul.hidden)};
+  items.forEach(function(x,i){x.onclick=function(){pick(i)};x.onmouseenter=function(){hi=i;paint()}});
+  btn.onkeydown=function(e){
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(ul.hidden)open(true);else{hi=(hi+(e.key==='ArrowDown'?1:items.length-1))%items.length;paint()}}
+    else if(e.key==='Enter'&&!ul.hidden){e.preventDefault();pick(hi)}
+    else if(e.key==='Escape')open(false)};
+  document.addEventListener('click',function(e){if(!dd.contains(e.target))open(false)})})();
 $('#privLink').onclick=function(e){e.preventDefault();openPriv()};
 Promise.all([
   api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
