@@ -1,5 +1,6 @@
 const { neon } = require('@neondatabase/serverless');
 const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 const scrypt = require('util').promisify(crypto.scrypt);
 
 const MAX = 4.4 * 1024 * 1024; // límite de Vercel para el cuerpo: 4,5 MB
@@ -15,6 +16,7 @@ function init() {
     await q`CREATE TABLE IF NOT EXISTS ajustes (clave text PRIMARY KEY, valor jsonb NOT NULL)`;
     await q`CREATE TABLE IF NOT EXISTS media (id text PRIMARY KEY, tipo text NOT NULL, datos text NOT NULL, creado timestamptz NOT NULL DEFAULT now())`;
     await q`CREATE TABLE IF NOT EXISTS usuarios (id text PRIMARY KEY, email text UNIQUE NOT NULL, nombre text NOT NULL, clave text NOT NULL, gasto bigint NOT NULL DEFAULT 0, usados int NOT NULL DEFAULT 0, creado timestamptz NOT NULL DEFAULT now())`;
+    await q`CREATE TABLE IF NOT EXISTS resets (id serial PRIMARY KEY, usuario_id text NOT NULL, token_hash text NOT NULL, expira timestamptz NOT NULL, creado timestamptz NOT NULL DEFAULT now())`;
     await q`CREATE TABLE IF NOT EXISTS pedidos (id serial PRIMARY KEY, usuario_id text, nombre text NOT NULL, telefono text NOT NULL, entrega text NOT NULL, direccion jsonb, items jsonb NOT NULL, subtotal bigint NOT NULL, descuento bigint NOT NULL DEFAULT 0, total bigint NOT NULL, metodo text NOT NULL, cupon boolean NOT NULL DEFAULT false, estado text NOT NULL DEFAULT 'pendiente', creado timestamptz NOT NULL DEFAULT now())`;
   })().catch(e => { ready = null; throw e; });
   return ready;
@@ -46,6 +48,14 @@ async function checkPw(pw, stored) {
   return crypto.timingSafeEqual(x, Buffer.from(h, 'hex'));
 }
 const adminEmail = () => (process.env.ADMIN_EMAIL || '').trim().toLowerCase();
+const sha256 = s => crypto.createHash('sha256').update(s).digest('hex');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const sitio = () => (process.env.SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL : '')).replace(/\/$/, '');
+const correoListo = () => !!(process.env.GMAIL_USER && process.env.GMAIL_APP_PASSWORD && sitio());
+async function mandar(to, asunto, texto, html) {
+  const t = nodemailer.createTransport({ service: 'gmail', auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD } });
+  await t.sendMail({ from: `"Rumat Parfums" <${process.env.GMAIL_USER}>`, to, subject: asunto, text: texto, html });
+}
 const wait = () => new Promise(r => setTimeout(r, 600));
 
 // ---- utilidades
@@ -112,6 +122,35 @@ module.exports = async (req, res) => {
       }
       await wait();
       return send(res, 401, { error: 'Correo o contraseña incorrectos.' });
+    }
+
+    if (path === 'olvide' && m === 'POST') {
+      const email = txt((await jbody(req)).email, 120).toLowerCase();
+      if (!correoListo()) return send(res, 503, { error: 'El envío de correos todavía no está configurado.' });
+      await init(); const q = db();
+      const u = email ? (await q`SELECT id, nombre FROM usuarios WHERE email = ${email}`)[0] : null;
+      if (u && !(await q`SELECT 1 FROM resets WHERE usuario_id = ${u.id} AND creado > now() - interval '60 seconds'`).length) {
+        const token = crypto.randomBytes(32).toString('hex');
+        await q`DELETE FROM resets WHERE usuario_id = ${u.id}`;
+        await q`INSERT INTO resets (usuario_id, token_hash, expira) VALUES (${u.id}, ${sha256(token)}, now() + interval '1 hour')`;
+        const link = sitio() + '/?reset=' + token;
+        const texto = `Hola ${u.nombre}:\n\nPediste restablecer la contraseña de tu cuenta en Rumat Parfums. Entrá a este enlace para elegir una nueva (vale por 1 hora y se puede usar una sola vez):\n\n${link}\n\nSi no fuiste vos, ignorá este mensaje: tu contraseña no cambia.`;
+        const html = `<div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;color:#222"><h2 style="color:#8a6a2b">Rumat Parfums</h2><p>Hola ${esc(u.nombre)}:</p><p>Pediste restablecer la contraseña de tu cuenta. El enlace vale por 1 hora y se puede usar una sola vez.</p><p><a href="${link}" style="display:inline-block;background:#c9a24a;color:#1a1208;padding:12px 22px;border-radius:8px;text-decoration:none;font-weight:bold">Elegir una contraseña nueva</a></p><p style="font-size:13px;color:#666">Si no fuiste vos, ignorá este mensaje: tu contraseña no cambia.</p></div>`;
+        try { await mandar(email, 'Restablecer tu contraseña · Rumat Parfums', texto, html); } catch (e) { console.error('mail', e.message); }
+      }
+      return send(res, 200, { ok: true }); // misma respuesta exista o no la cuenta
+    }
+
+    if (path === 'restablecer' && m === 'POST') {
+      const b = await jbody(req);
+      const pw = String(b.password || ''), tk = String(b.token || '');
+      if (pw.length < 8 || pw.length > 100) return send(res, 400, { error: 'La contraseña debe tener al menos 8 caracteres.' });
+      await init(); const q = db();
+      const r = await q`SELECT usuario_id FROM resets WHERE token_hash = ${sha256(tk)} AND expira > now()`;
+      if (!r[0]) { await wait(); return send(res, 400, { error: 'El enlace venció o ya se usó. Pedí uno nuevo.' }); }
+      await q`UPDATE usuarios SET clave = ${await hashPw(pw)} WHERE id = ${r[0].usuario_id}`;
+      await q`DELETE FROM resets WHERE usuario_id = ${r[0].usuario_id}`;
+      return send(res, 200, { token: makeToken(r[0].usuario_id, false, 24 * 14) });
     }
 
     if (path === 'yo' && m === 'GET') {

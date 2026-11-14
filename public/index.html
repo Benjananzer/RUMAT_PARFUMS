@@ -243,6 +243,18 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 .ddl li.act{background:rgba(255,255,255,.08);color:var(--gold2)}
 .ddl li[aria-selected="true"]{color:var(--gold2)}
 .ddl li[aria-selected="true"]::after{content:"✓";color:var(--gold)}
+.promo{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--gold3,var(--line));border-radius:18px;padding:16px 20px;margin:0 0 20px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+.promo[hidden]{display:none}
+.promo p{margin:0;flex:1 1 260px;font-size:.92rem;line-height:1.5;color:var(--text)}
+.promo b{color:var(--gold2)}
+.promo button{height:42px;padding:0 22px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.promo button:hover{background:var(--gold);color:#1a1208}
+.pager{display:flex;justify-content:center;align-items:center;gap:18px;margin:36px 0 10px}
+.pager[hidden]{display:none}
+.pager button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--gold2);cursor:pointer;display:grid;place-items:center;transition:border-color .2s,background .2s}
+.pager button:hover:not(:disabled){border-color:var(--gold);background:rgba(255,255,255,.1)}
+.pager button:disabled{opacity:.3;cursor:not-allowed}
+.pager span{font-family:var(--sans);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 </style>
 </head>
 <body>
@@ -266,8 +278,9 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
   <div class="wrap"><div class="reveal"><div class="orn"><b></b></div><h2 class="gold">La colección</h2><p class="lead">Elegí tu esencia</p></div></div>
   <div class="bar"><div class="wrap"><div id="chips"></div></div></div>
   <div class="wrap">
+    <div class="promo" id="promo" hidden></div>
     <div class="tools"><input id="busq" type="search" placeholder="Buscar perfume o marca" aria-label="Buscar perfume o marca"><div class="dd" id="orden"><button type="button" class="ddb" aria-haspopup="listbox" aria-expanded="false" aria-label="Ordenar por precio"><span id="ordenTxt">Ordenar por precio</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><ul class="ddl" role="listbox" hidden><li role="option" data-v="" aria-selected="true">Predeterminado</li><li role="option" data-v="asc" aria-selected="false">Precio: menor a mayor</li><li role="option" data-v="desc" aria-selected="false">Precio: mayor a menor</li></ul></div></div>
-    <div class="count" id="count"></div><div id="grid"></div></div>
+    <div class="count" id="count"></div><div id="grid"></div><nav class="pager" id="pager" aria-label="Páginas del catálogo" hidden></nav></div>
 </main>
 
 <section class="gallery">
@@ -317,7 +330,7 @@ function pf(p){return p.dto>0?Math.round(p.precio*(1-p.dto/100)):p.precio}
 function readImg(file,max){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){up(b,'image/jpeg').then(ok,no)},'image/jpeg',.82)};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode('rumat:'+s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 var data=[],pago={alias:'',titular:'',qr:''},portada='',adm='',vids=[];
-var busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
+var pagina=1,lastSig='',PAGE=12,busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
 var LABEL={masculino:'Masculino',femenino:'Femenino',unisex:'Unisex'};
 var METODO={transferencia:'Transferencia (alias)',efectivo:'Efectivo',qr:'QR'};
 var buy=null;
@@ -357,9 +370,14 @@ function renderGrid(){
     var ok=filter==='todos'||(filter==='ofertas'?p.dto>0:filter==='vendidos'?!!p.top:p.genero===filter);
     if(ok&&busq)ok=nz(p.nombre+' '+(p.marca||'')+' '+(p.descripcion||'')).indexOf(nz(busq))>-1;return ok});
   if(orden)list.sort(function(a,b){return orden==='asc'?pf(a)-pf(b):pf(b)-pf(a)});
+  list=list.filter(function(p){return stockOf(p)>0}).concat(list.filter(function(p){return stockOf(p)<=0}));
+  var sig=filter+'|'+busq+'|'+orden;if(sig!==lastSig){pagina=1;lastSig=sig}
+  var pages=Math.max(1,Math.ceil(list.length/PAGE));if(pagina>pages)pagina=pages;
+  var pg=$('#pager');pg.innerHTML='';pg.hidden=pages<2;
+  var shown=list.slice((pagina-1)*PAGE,pagina*PAGE);
   $('#count').textContent=data.length?list.length+(list.length===1?' fragancia':' fragancias'):'';
   if(!list.length){g.appendChild(el('div','empty',data.length?(busq?'No encontramos fragancias con esa búsqueda.':'Todavía no hay fragancias en esta categoría.'):'Muy pronto vas a encontrar acá nuestras fragancias.'));return}
-  list.forEach(function(p,i){
+  shown.forEach(function(p,i){
     var c=el('article','card');c.style.setProperty('--i',i);
     if(p.fotos&&p.fotos.length){var ph=el('div','ph');p.fotos.forEach(function(s){var im=el('img');im.src=s;im.alt=p.nombre;im.loading='lazy';ph.appendChild(im)});c.appendChild(ph)}
     c.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')+(p.top?' · ★ Más vendido':'')));
@@ -374,7 +392,13 @@ function renderGrid(){
     var a=el('a','wa','Consultar por WhatsApp');a.target='_blank';a.rel='noopener';
     a.href='https://wa.me/'+WA+'?text='+encodeURIComponent('Hola! Quiero consultar por el perfume '+p.nombre);c.appendChild(a);
     c.style.cursor='pointer';c.onclick=function(e){if(e.target.closest('button,a'))return;location.hash='p-'+p.id};
-    g.appendChild(c)})}
+    g.appendChild(c)});
+  if(pages>1){
+    function go(n){pagina=n;renderGrid();var t=$('.tools');if(t)t.scrollIntoView({behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+    var ic=function(d){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>'};
+    var pv=el('button');pv.type='button';pv.innerHTML=ic('M15 5l-7 7 7 7');pv.disabled=pagina<=1;pv.setAttribute('aria-label','Página anterior');pv.onclick=function(){go(pagina-1)};
+    var nx=el('button');nx.type='button';nx.innerHTML=ic('M9 5l7 7-7 7');nx.disabled=pagina>=pages;nx.setAttribute('aria-label','Página siguiente');nx.onclick=function(){go(pagina+1)};
+    pg.appendChild(pv);pg.appendChild(el('span',null,'Página '+pagina+' de '+pages));pg.appendChild(nx)}}
 
 /* compra */
 var cart=[];
@@ -473,12 +497,32 @@ function openAccount(after,tab){
   b.appendChild(el('div','info','Tener cuenta es opcional: sirve para sumar puntos y descuentos. Podés comprar sin cuenta.'));
   var F={};function bi(label,key,type,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';if(ac)i.autocomplete=ac;F[key]=i;b.appendChild(i)}
   if(reg)bi('Tu nombre','nombre','text','name');bi('Correo electrónico','email','email','email');bi('Contraseña'+(reg?' (mínimo 8 caracteres)':''),'password','password',reg?'new-password':'current-password');
+  if(!reg){var fo=el('div','info'),fa=el('a',null,'¿Olvidaste tu contraseña?');fa.onclick=function(){openForgot(after)};fo.appendChild(fa);b.appendChild(fo)}
   var ck;if(reg){var cl=el('label','opt'),tx=el('div');ck=el('input');ck.type='checkbox';tx.appendChild(document.createTextNode('Acepto la '));var a=el('a',null,'Política de privacidad');a.onclick=function(e){e.preventDefault();openPriv(function(){openAccount(after,'reg')})};tx.appendChild(a);tx.appendChild(el('small',null,'Usamos tu correo solo para tu cuenta y tus puntos.'));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
   var em=el('div','lab');b.appendChild(em);var go=el('button','btn2',reg?'Crear cuenta':'Ingresar');go.type='button';
   go.onclick=function(){go.disabled=true;em.textContent='Un momento…';
     api(reg?'registro':'login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:F.email.value,password:F.password.value,nombre:reg?F.nombre.value:undefined,acepta:reg?ck.checked:undefined})})
     .then(function(j){setTok(j.token);return loadMe()}).then(function(){if(after)after();else openAccount()})
     .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo.'})};b.appendChild(go)}
+function openForgot(after){var b=sheetOpen('RECUPERAR CONTRASEÑA');
+  b.appendChild(el('div','info','Escribí el correo de tu cuenta y te enviamos un enlace para elegir una contraseña nueva.'));
+  b.appendChild(el('div','lab','Correo electrónico'));var i=el('input','fld');i.type='email';i.autocomplete='email';b.appendChild(i);
+  var em=el('div','lab');b.appendChild(em);var go=el('button','btn2','Enviar enlace');go.type='button';
+  go.onclick=function(){if(!i.value.trim()){em.textContent='Escribí tu correo.';return}go.disabled=true;em.textContent='Enviando…';
+    api('olvide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:i.value})})
+    .then(function(){em.textContent='Si ese correo tiene una cuenta, te enviamos un mensaje con el enlace. Revisá también la carpeta de spam. El enlace vale por 1 hora.';go.hidden=true})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo enviar.'})};b.appendChild(go);
+  var v=el('button','btn2 ghost','Volver');v.type='button';v.onclick=function(){openAccount(after)};b.appendChild(v)}
+function openReset(token){var b=sheetOpen('NUEVA CONTRASEÑA');
+  b.appendChild(el('div','info','Elegí una contraseña nueva para tu cuenta (mínimo 8 caracteres).'));
+  function bi(l){b.appendChild(el('div','lab',l));var i=el('input','fld');i.type='password';i.autocomplete='new-password';b.appendChild(i);return i}
+  var p1=bi('Contraseña nueva'),p2=bi('Repetí la contraseña'),em=el('div','lab');b.appendChild(em);
+  var go=el('button','btn2','Guardar contraseña');go.type='button';
+  go.onclick=function(){if(p1.value.length<8){em.textContent='La contraseña debe tener al menos 8 caracteres.';return}if(p1.value!==p2.value){em.textContent='Las contraseñas no coinciden.';return}
+    go.disabled=true;em.textContent='Guardando…';
+    api('restablecer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,password:p1.value})})
+    .then(function(j){setTok(j.token);try{history.replaceState(null,'',location.pathname)}catch(e){}return loadMe()}).then(function(){openAccount()})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo guardar.';if(e.status===400&&/enlace/.test(e.message)){var n=el('button','btn2 ghost','Pedir otro enlace');n.type='button';n.onclick=function(){openForgot()};b.appendChild(n)}})};b.appendChild(go)}
 /* pedidos (administrador) */
 var PED=[],pedEst='pendiente';
 function loadPedidos(box,cached){box.innerHTML='';box.appendChild(el('h4',null,'PEDIDOS'));
@@ -616,7 +660,13 @@ function api(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers);if(
     if(!r.ok){var e=new Error(j.error||'Error '+r.status);e.status=r.status;throw e}return j})})}
 function up(blob,type){return fetch('/api/media',{method:'POST',headers:{'Content-Type':type,Authorization:'Bearer '+TOKEN},body:blob})
   .then(function(r){if(!r.ok)throw new Error('up');return r.json()}).then(function(j){return j.url})}
-function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ingresar';$('#adminBtn').hidden=!(ME&&ME.adm)}
+function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ingresar';$('#adminBtn').hidden=!(ME&&ME.adm);renderPromo()}
+function renderPromo(){var p=$('#promo');p.innerHTML='';
+  if(ME&&ME.adm){p.hidden=true;return}
+  var t=el('p'),b=el('button',null,ME?'Ver mi cuenta':'Crear cuenta');b.type='button';
+  if(ME){t.appendChild(el('b',null,'Tus puntos: '));t.appendChild(document.createTextNode(ME.disponibles>0?'tenés '+ME.disponibles+(ME.disponibles>1?' descuentos':' descuento')+' del '+ME.desc+'% para usar en tu próximo pedido.':'te faltan '+fmt(ME.falta)+' en compras para ganar un '+ME.desc+'% de descuento.'));b.onclick=function(){openAccount()}}
+  else{t.appendChild(el('b',null,'Creá tu cuenta y sumá puntos. '));t.appendChild(document.createTextNode('Cada $159.000 en compras te da un 10% de descuento en tu próxima compra.'));b.onclick=function(){openAccount(null,'reg')}}
+  p.appendChild(t);p.appendChild(b);p.hidden=false}
 function loadMe(){if(!TOKEN){ME=null;showMe();return Promise.resolve()}return api('yo').then(function(m){ME=m}).catch(function(){ME=null}).then(showMe)}
 $('#userBtn').onclick=function(){openAccount()};
 $('#busq').oninput=function(){busq=this.value;renderGrid()};
@@ -636,7 +686,8 @@ Promise.all([
   api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
     .catch(function(){var c=$('#count');if(c)c.textContent='No se pudo cargar el catálogo. Recargá la página.'}),
   loadMe()
-]).then(function(){showCover();showVids();renderChips();renderGrid();route();routeD()});
+]).then(function(){showCover();showVids();renderChips();renderGrid();route();routeD();
+  var rt=new URLSearchParams(location.search).get('reset');if(rt)openReset(rt)});
 })();
 </script>
 
