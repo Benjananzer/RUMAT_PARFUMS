@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="es" data-theme="dark" style="color-scheme: dark;"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rumat Parfums</title>
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<meta name="description" content="Fragancias árabes y de diseñador. Showroom con reserva previa en Franck, Santa Fe.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:dark;
+--bg:#0a0807;--card:#18120d;--text:#f3ead9;--muted:#b3a58f;--line:#43362a;
+--gold:#d4af6a;--gold2:#f2dca0;--gold3:#9c7a3c;
+--gradient:linear-gradient(110deg,#9c7a3c 0%,#f2dca0 30%,#d4af6a 50%,#f7e7b8 70%,#9c7a3c 100%);
+--serif:"Cinzel","Times New Roman",serif;--elegant:"Cormorant Garamond",Georgia,serif;--sans:"Montserrat",system-ui,sans-serif}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;overflow-x:hidden}
+.gold{background:var(--gradient);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shimmer 6s linear infinite}
+@keyframes shimmer{to{background-position:-250% 0}}
+
+/* HERO */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden;background:#1a1109}
+.mosaic{position:absolute;inset:0;display:grid;grid-template-columns:repeat(4,1fr);z-index:0}
+.mosaic img{width:100%;height:100%;object-fit:cover;display:block;filter:blur(3px) saturate(1.2) brightness(.7);transform:scale(1.1);animation:kb 20s ease-in-out infinite alternate}
+.mosaic img:nth-child(even){animation-delay:-10s}
+@keyframes kb{to{transform:scale(1.22) translateY(-2%)}}
+.hero::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at 50% 42%,rgba(20,13,7,.25) 0%,rgba(14,9,5,.7) 55%,rgba(10,8,7,.96) 100%),linear-gradient(transparent 70%,var(--bg))}
+.hero-inner{position:relative;z-index:3;padding:32px 20px;opacity:calc(1 - var(--p,0)*1.2);will-change:opacity}
+.logo-wrap{position:relative;width:min(62vw,340px);aspect-ratio:1;margin:0 auto 34px}
+.logo-wrap img{position:relative;z-index:2;width:100%;height:100%;border-radius:50%;display:block;box-shadow:0 0 60px rgba(212,175,106,.4),0 0 140px rgba(212,175,106,.18)}
+.ring{position:absolute;inset:-14px;border-radius:50%;border:1px solid rgba(212,175,106,.6);z-index:1}
+.ring.r2{inset:-30px;opacity:.3}
+h1{font-family:var(--serif);font-weight:700;font-size:clamp(2rem,7vw,4.2rem);letter-spacing:.22em;margin:0;padding-left:.22em;display:flex;justify-content:center;flex-wrap:wrap;gap:0 .45em}
+h1 .w{display:inline-flex}
+h1 .l{display:inline-block;opacity:0;transform:translateY(30px);animation:letter .9s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(.6s + var(--i)*70ms)}
+@keyframes letter{to{opacity:1;transform:none}}
+.tag{font-family:var(--elegant);font-style:italic;font-size:clamp(1.1rem,3vw,1.6rem);color:var(--gold2);margin:14px 0 0;opacity:0;animation:fade 1.2s ease 1.8s forwards}
+.sub{font-size:.72rem;letter-spacing:.38em;text-transform:uppercase;color:var(--muted);margin-top:10px;opacity:0;animation:fade 1.2s ease 2.1s forwards}
+@keyframes fade{to{opacity:1}}
+.cue{position:absolute;bottom:max(26px,env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);z-index:4;color:var(--gold);text-decoration:none;font-size:.68rem;letter-spacing:.3em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:10px;opacity:0;animation:fade 1s ease 2.6s forwards}
+.cue i{width:1px;height:46px;background:linear-gradient(var(--gold),transparent);position:relative;overflow:hidden}
+.cue i::after{content:"";position:absolute;left:0;top:-100%;width:100%;height:100%;background:var(--gold2);animation:drip 2s ease-in-out infinite}
+@keyframes drip{to{top:100%}}
+#particles{position:absolute;inset:0;z-index:2;pointer-events:none}
+#particles span{position:absolute;bottom:-10px;width:var(--s);height:var(--s);border-radius:50%;background:var(--gold2);opacity:0;box-shadow:0 0 8px var(--gold);animation:rise var(--d) linear var(--dl) infinite}
+@keyframes rise{0%{opacity:0;transform:translate(0,0)}15%{opacity:.8}100%{opacity:0;transform:translate(var(--x),-105vh)}}
+
+/* ADMIN BTN */
+#adminBtn,#userBtn{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:14px;z-index:45;display:flex;align-items:center;gap:8px;padding:11px 18px;border:1px solid var(--gold);border-radius:999px;background:rgba(10,8,7,.75);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--gold2);font-family:var(--sans);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:all .3s}
+#adminBtn:hover,#userBtn:hover{background:var(--gold);color:#1a1208}
+
+/* CATALOGO */
+.catalog{position:relative;padding:90px 0 60px;background:radial-gradient(ellipse at 50% 0,#33220f 0,transparent 55%),radial-gradient(ellipse at 100% 55%,#2a1a0c,transparent 50%),radial-gradient(ellipse at 0 85%,#2a1a0c,transparent 45%),linear-gradient(var(--bg),#150e08 50%,#0f0a06)}
+.wrap{max-width:1080px;margin:0 auto;padding:0 18px}
+.orn{display:flex;align-items:center;justify-content:center;gap:14px;color:var(--gold);margin-bottom:14px}
+.orn::before,.orn::after{content:"";height:1px;width:min(90px,18vw);background:linear-gradient(90deg,transparent,var(--gold))}
+.orn::after{transform:scaleX(-1)}
+.orn b{width:9px;height:9px;transform:rotate(45deg);border:1px solid var(--gold);display:block}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.6rem,4.5vw,2.6rem);letter-spacing:.18em;text-align:center;margin:0 0 8px;text-transform:uppercase}
+.lead{text-align:center;font-family:var(--elegant);font-style:italic;font-size:1.25rem;color:var(--muted);margin:0 0 34px}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;padding:12px 0;margin-bottom:28px;background:rgba(14,9,5,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:rgba(14,9,5,.82);z-index:19}
+#chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.chip{font-family:var(--sans);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;padding:11px 22px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;transition:all .35s}
+.chip:hover{border-color:var(--gold);color:var(--gold2);transform:translateY(-2px)}
+.chip[aria-pressed="true"]{background:var(--gradient);background-size:200% 100%;color:#1a1208;border-color:transparent;font-weight:600;box-shadow:0 6px 24px rgba(212,175,106,.3)}
+.count{text-align:center;color:var(--muted);font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;margin-bottom:22px;min-height:1.2em}
+#grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}
+.card{position:relative;background:linear-gradient(160deg,#241a11,var(--card) 60%);border:1px solid var(--line);border-radius:18px;padding:26px 22px 22px;display:flex;flex-direction:column;gap:10px;overflow:hidden;opacity:0;transform:translateY(34px) scale(.96);animation:cardIn .8s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--i)*90ms);transition:border-color .4s,box-shadow .4s,translate .4s}
+@keyframes cardIn{to{opacity:1;transform:none}}
+.card::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(115deg,transparent 35%,rgba(242,220,160,.12) 50%,transparent 65%);transform:translateX(-120%);transition:transform .9s}
+.card:hover{border-color:var(--gold);box-shadow:0 18px 50px rgba(0,0,0,.6),0 0 30px rgba(212,175,106,.18);translate:0 -8px}
+.card:hover::before{transform:translateX(120%)}
+.badge{align-self:flex-start;font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;padding:5px 12px;border-radius:999px;border:1px solid var(--gold3);color:var(--gold2)}
+.card h3{font-family:var(--serif);font-weight:600;font-size:1.3rem;letter-spacing:.06em;margin:6px 0 0}
+.card p{font-family:var(--elegant);font-size:1.12rem;color:var(--muted);margin:0;flex:1;line-height:1.45}
+.price{font-family:var(--serif);font-size:1.5rem;font-weight:600}
+.buy{width:100%;font-family:var(--sans);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;font-weight:600;padding:14px 16px;border:0;border-radius:10px;background:var(--gradient);background-size:200% 100%;color:#1a1208;cursor:pointer;position:relative;z-index:1;transition:transform .3s,box-shadow .3s}
+.buy:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,175,106,.35)}
+.wa{display:flex;justify-content:center;text-decoration:none;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);position:relative;z-index:1;transition:color .3s}
+.wa:hover{color:var(--gold2)}
+.empty{grid-column:1/-1;text-align:center;font-family:var(--elegant);font-style:italic;font-size:1.4rem;color:var(--muted);padding:50px 0}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 1s cubic-bezier(.2,.8,.2,1),transform 1s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* GALERIA + VIDEO */
+.gallery{padding:90px 0 40px;background:radial-gradient(ellipse at 15% 0,#33220f,transparent 55%),radial-gradient(ellipse at 90% 100%,#2d1d0e,transparent 55%),#0f0a06}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+.gal figure{margin:0;aspect-ratio:4/4.6;border-radius:18px;overflow:hidden;border:1px solid var(--gold3);position:relative;box-shadow:0 14px 40px rgba(0,0,0,.5)}
+.gal figure:nth-child(even){margin-top:26px}
+.gal img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 1.2s cubic-bezier(.2,.8,.2,1),filter .6s;filter:saturate(1.1)}
+.gal figure::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(10,8,7,.7));pointer-events:none}
+.gal figure:hover img{transform:scale(1.1)}
+#videoSec{padding:70px 0 20px;background:#0f0a06}
+.vbox{max-width:860px;margin:0 auto;border-radius:20px;overflow:hidden;border:1px solid var(--gold3);box-shadow:0 20px 60px rgba(0,0,0,.6),0 0 40px rgba(212,175,106,.15)}
+.vbox video{width:100%;display:block;background:#000;max-height:80vh}
+
+/* COMPRA */
+#modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity .35s}
+#modal.open{opacity:1;pointer-events:auto}
+.sheet{width:min(470px,100%);max-height:calc(100vh - 32px);overflow-y:auto;background:linear-gradient(170deg,#241a10,#0f0a07);border:1px solid var(--gold3);border-radius:20px;padding:0 0 22px;transform:translateY(40px) scale(.96);transition:transform .45s cubic-bezier(.2,.8,.2,1);box-shadow:0 30px 80px rgba(0,0,0,.7),0 0 40px rgba(212,175,106,.12)}
+#modal.open .sheet{transform:none}
+.dh{display:flex;justify-content:space-between;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line)}
+.dh h3{margin:0;font-family:var(--serif);letter-spacing:.16em;font-size:1.05rem}
+.x{background:none;border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:50%;cursor:pointer}
+.sb{padding:20px 22px 0;display:flex;flex-direction:column;gap:14px}
+.prod{display:flex;justify-content:space-between;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.prod b{font-family:var(--serif);font-weight:600;letter-spacing:.04em;display:block}
+.prod span{color:var(--muted);font-size:.85rem}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:32px;height:32px;border-radius:50%;border:1px solid var(--gold3);background:transparent;color:var(--gold2);cursor:pointer;font-size:1rem}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--serif);font-size:1.3rem}
+.lab{font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--muted)}
+.fld{width:100%;padding:13px 14px;border:1px solid var(--line);border-radius:10px;background:#0f0b08;color:var(--text);font:inherit;font-size:.95rem}
+.opts{display:grid;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;padding:13px 16px;border:1px solid var(--line);border-radius:12px;cursor:pointer;transition:all .3s}
+.opt:hover{border-color:var(--gold3)}
+.opt.sel{border-color:var(--gold);background:rgba(212,175,106,.09);box-shadow:0 0 20px rgba(212,175,106,.12)}
+.opt input{accent-color:var(--gold)}
+.opt b{font-weight:500}
+.opt small{display:block;color:var(--muted);font-size:.76rem}
+.info{border:1px dashed var(--gold3);border-radius:12px;padding:16px;font-size:.88rem;color:var(--muted);animation:cardIn .5s both;text-align:center}
+.info .alias{font-family:var(--serif);font-size:1.35rem;color:var(--gold2);letter-spacing:.06em;word-break:break-all;margin:6px 0}
+.info img{width:min(230px,72%);border-radius:12px;background:#fff;padding:8px;display:block;margin:10px auto}
+.btn2{display:block;text-align:center;text-decoration:none;font-family:var(--sans);font-size:.74rem;letter-spacing:.2em;text-transform:uppercase;font-weight:600;padding:15px;border:0;border-radius:12px;background:var(--gradient);color:#1a1208;cursor:pointer;width:100%}
+.btn2.ghost{background:transparent;border:1px solid var(--gold3);color:var(--gold2);margin-top:12px;padding:11px}
+.done{text-align:center;padding:30px 0 6px;display:grid;gap:14px;font-family:var(--elegant);font-size:1.25rem}
+.done b{font-family:var(--serif);letter-spacing:.12em;font-size:1.15rem}
+
+/* ADMIN VIEW */
+#adminView{position:fixed;inset:0;z-index:80;overflow-y:auto;background:radial-gradient(ellipse at 50% 0,#33220f,transparent 60%),#0c0805;transform:translateY(100%);opacity:0;pointer-events:none;transition:transform .5s cubic-bezier(.2,.8,.2,1),opacity .4s;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#adminView.open{transform:none;opacity:1;pointer-events:auto}
+.aw{max-width:760px;margin:0 auto;padding:26px 18px 60px}
+.ah{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap}
+.ah h2{margin:0;text-align:left;font-size:1.4rem}
+.back{background:transparent;border:1px solid var(--gold3);color:var(--gold2);padding:10px 18px;border-radius:999px;font-family:var(--sans);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;cursor:pointer}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:26px}
+.panel h4{margin:0 0 14px;font-family:var(--serif);letter-spacing:.12em;color:var(--gold2);font-size:.95rem;font-weight:600}
+.panel form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.panel .full{grid-column:1/-1}
+.panel label{display:block;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.panel input,.panel select,.panel textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#0f0b08;color:var(--text);font:inherit;font-size:.95rem}
+.panel .go{padding:13px 24px;border:0;border-radius:10px;background:var(--gradient);color:#1a1208;font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.74rem;cursor:pointer;width:auto}
+.panel .cancel{margin-left:10px;background:none;border:1px solid var(--line);color:var(--muted);padding:12px 18px;border-radius:10px;cursor:pointer;font:inherit;font-size:.8rem}
+.lrow{display:flex;gap:14px;justify-content:space-between;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+.lrow:last-child{border:0}
+.lrow b{font-family:var(--serif);letter-spacing:.04em}
+.lrow small{display:block;color:var(--muted);font-size:.82rem;margin-top:2px}
+.lrow .acts{display:flex;gap:8px;flex-shrink:0}
+.sm{background:transparent;border:1px solid var(--gold3);color:var(--gold2);padding:7px 12px;border-radius:8px;font-size:.7rem;cursor:pointer;font-family:var(--sans)}
+.sm.red{border-color:#7a4444;color:#e0a0a0}
+#amsg{font-size:.82rem;color:var(--gold2);min-height:1.3em;margin-top:10px}
+
+/* FOOTER */
+footer{padding:70px 18px calc(50px + env(safe-area-inset-bottom,0px));text-align:center;border-top:1px solid var(--line);background:radial-gradient(ellipse at 50% 0,#2a1b0c,transparent 70%),#0c0805}
+footer .brand{font-family:var(--serif);letter-spacing:.3em;font-size:1.1rem}
+footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
+.links{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:22px}
+.links a{text-decoration:none;color:var(--gold2);border:1px solid var(--gold3);padding:12px 24px;border-radius:999px;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;transition:all .35s}
+.links a:hover{background:var(--gold);color:#1a1208;transform:translateY(-3px)}
+@media (max-width:700px){.mosaic{grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr)}.gal figure:nth-child(even){margin-top:0}}
+@media (max-width:520px){.panel form{grid-template-columns:1fr}.chip{padding:10px 15px;font-size:.68rem}#adminBtn,#userBtn{padding:9px 14px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}.card,.reveal,h1 .l,.tag,.sub,.cue{opacity:1!important;transform:none!important}}
+.club,#contacto{padding:70px 0 0}
+.perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:60px}
+.perk{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:center}
+.perk b{font-family:var(--serif);color:var(--gold);font-size:1.4rem}
+.perk h3{font-family:var(--serif);letter-spacing:.14em;color:var(--gold2);font-size:.95rem;margin:8px 0}
+.perk p{margin:0;color:var(--muted);font-size:.9rem}
+.cform{max-width:560px;margin:0 auto 70px}
+.cform .chk{display:flex;gap:10px;align-items:center;text-transform:none;letter-spacing:0;font-size:.85rem;color:var(--text)}
+.cform .chk input{width:auto;accent-color:var(--gold)}
+#cmsg{margin-top:12px;font-size:.85rem;color:var(--muted)}
+@media(max-width:560px){.cform form{grid-template-columns:1fr}}
+.mosaic,#particles{display:none}
+.hero{background:radial-gradient(ellipse at 50% 35%,#3a270f 0,#1a1109 55%,#0a0807 100%)}
+.hero.cv{background-size:cover;background-position:center}
+.ph{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:-26px -22px 8px;aspect-ratio:1;scrollbar-width:none;background:#0f0b08}
+.ph::-webkit-scrollbar{display:none}
+.ph img{flex:0 0 100%;width:100%;height:100%;object-fit:cover;scroll-snap-align:start}
+.off{position:absolute;top:14px;right:14px;z-index:2;background:var(--gradient);color:#1a1208;font-weight:700;font-size:.72rem;letter-spacing:.1em;padding:6px 12px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.4)}
+.price{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.price s{color:var(--muted);font-size:1rem;font-family:var(--sans)}
+.card{border-radius:20px}
+.card:hover .ph img{filter:brightness(1.08)}
+.pv{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.pt{position:relative;width:76px;height:76px}
+.pt img{width:100%;height:100%;object-fit:cover;border-radius:10px;border:1px solid var(--line)}
+.pt button{position:absolute;top:-7px;right:-7px;width:22px;height:22px;border-radius:50%;border:0;background:#c0392b;color:#fff;cursor:pointer;line-height:1}
+#cartBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;display:flex;gap:10px;align-items:center;padding:14px 20px;border:0;border-radius:999px;background:var(--gradient);color:#1a1208;font-family:var(--sans);font-weight:700;font-size:.74rem;letter-spacing:.18em;text-transform:uppercase;box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer}
+#cartBtn[hidden]{display:none}
+#cartBtn b{background:#1a1208;color:var(--gold2);border-radius:999px;min-width:24px;height:24px;display:grid;place-items:center;padding:0 6px}
+.stk{font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold2)}
+#detail{position:fixed;inset:0;z-index:48;overflow-y:auto;background:radial-gradient(ellipse at 50% 0,#33220f,transparent 60%),#0c0805;opacity:0;pointer-events:none;transform:translateY(24px);transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.2,1);padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#detail.open{opacity:1;pointer-events:auto;transform:none}
+.dw{max-width:1000px;margin:0 auto;padding:18px 18px 90px}
+.dback{background:none;border:1px solid var(--line);color:var(--gold2);font-family:var(--sans);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;padding:11px 18px;border-radius:999px;cursor:pointer;margin-bottom:20px}
+.dgrid{display:grid;grid-template-columns:1fr;gap:26px}
+@media(min-width:820px){.dgrid{grid-template-columns:1.1fr 1fr;align-items:start}}
+.dmain{width:100%;aspect-ratio:1;object-fit:cover;border-radius:20px;border:1px solid var(--gold3);display:block;background:#0f0b08}
+.dth{display:flex;gap:10px;margin-top:12px;overflow-x:auto}
+.dth img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:pointer;opacity:.6;flex:0 0 auto}
+.dth img.on{opacity:1;border-color:var(--gold)}
+.dnone{aspect-ratio:1;display:grid;place-items:center;border:1px dashed var(--line);border-radius:20px;color:var(--muted)}
+.dr{display:flex;flex-direction:column;gap:14px}
+.dr h2{text-align:left;margin:0;font-size:clamp(1.5rem,5vw,2.2rem)}
+.dprice{font-family:var(--serif);font-size:1.9rem;font-weight:600;display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.dprice s{color:var(--muted);font-size:1.1rem;font-family:var(--sans)}
+.off2{background:var(--gradient);color:#1a1208;font-weight:700;font-size:.72rem;letter-spacing:.1em;padding:5px 12px;border-radius:999px;font-family:var(--sans)}
+.ddesc{font-family:var(--elegant);font-size:1.25rem;color:var(--muted);line-height:1.55;white-space:pre-line;margin:0}
+.card p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.buy:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.vbox video+video{margin-top:2px}
+.gal{display:flex;justify-content:center}
+.gal figure{width:min(440px,100%);aspect-ratio:2/3;margin-top:0!important}
+.cue{left:0;right:0;transform:none;margin:0 auto;width:max-content}
+#adminBtn{right:auto;left:14px}
+#userBtn{cursor:pointer;background:transparent;color:var(--gold2);font-family:var(--sans);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase}
+#adminBtn[hidden]{display:none}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 20px}
+.tools input,.tools select{height:46px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);padding:0 18px;font-family:var(--sans);font-size:.9rem}
+.tools input{flex:1 1 220px}.tools select{flex:0 1 220px}
+.prog{height:8px;border-radius:99px;background:rgba(255,255,255,.12);overflow:hidden;margin:10px 0}
+.prog i{display:block;height:100%;background:var(--gradient)}
+.panel label.chk{display:flex;gap:10px;align-items:center;text-transform:none;letter-spacing:0}
+.panel .chk input{width:auto}
+.sb .opt input[type=checkbox]{accent-color:var(--gold)}
+.sb a{color:var(--gold2);text-decoration:underline;cursor:pointer}
+.pol p{margin:0 0 12px;font-size:.92rem;line-height:1.55;color:var(--muted)}
+.pol b{color:var(--gold2)}
+.tools{position:relative;z-index:15}
+.dd{position:relative;flex:0 1 250px}
+.ddb{width:100%;height:46px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--text);padding:0 18px;font-family:var(--sans);font-size:.9rem;cursor:pointer;transition:border-color .2s}
+.ddb:hover,.ddb[aria-expanded="true"]{border-color:var(--gold)}
+.ddb svg{flex:none;transition:transform .25s}
+.ddb[aria-expanded="true"] svg{transform:rotate(180deg)}
+.ddl{position:absolute;z-index:30;top:calc(100% + 8px);left:0;right:0;margin:0;padding:6px;list-style:none;border-radius:18px;border:1px solid var(--gold3,var(--line));background:#17100a;box-shadow:0 18px 40px rgba(0,0,0,.6)}
+.ddl[hidden]{display:none}
+.ddl li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px 16px;border-radius:12px;color:var(--text);font-family:var(--sans);font-size:.9rem;cursor:pointer}
+.ddl li.act{background:rgba(255,255,255,.08);color:var(--gold2)}
+.ddl li[aria-selected="true"]{color:var(--gold2)}
+.ddl li[aria-selected="true"]::after{content:"✓";color:var(--gold)}
+.promo{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;border:1px solid var(--gold3,var(--line));border-radius:18px;padding:16px 20px;margin:0 0 20px;background:linear-gradient(135deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+.promo[hidden]{display:none}
+.promo p{margin:0;flex:1 1 260px;font-size:.92rem;line-height:1.5;color:var(--text)}
+.promo b{color:var(--gold2)}
+.promo button{height:42px;padding:0 22px;border-radius:999px;border:1px solid var(--gold);background:transparent;color:var(--gold2);font-family:var(--sans);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.promo button:hover{background:var(--gold);color:#1a1208}
+.pager{display:flex;justify-content:center;align-items:center;gap:18px;margin:36px 0 10px}
+.pager[hidden]{display:none}
+.pager button{width:48px;height:48px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.05);color:var(--gold2);cursor:pointer;display:grid;place-items:center;transition:border-color .2s,background .2s}
+.pager button:hover:not(:disabled){border-color:var(--gold);background:rgba(255,255,255,.1)}
+.pager button:disabled{opacity:.3;cursor:not-allowed}
+.pager span{font-family:var(--sans);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<button id="userBtn" type="button">Ingresar</button>
+<button id="adminBtn" type="button" hidden=""><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"></path></svg>Administrar</button>
+
+<header class="hero" id="hero">
+  
+  <div id="particles"></div>
+  <div class="hero-inner">
+    <div class="logo-wrap"><div class="ring"></div><div class="ring r2"></div><img src="/img/logo-rumat.webp" alt="Logo de Rumat Parfums" width="340" height="340"></div>
+    <h1 class="gold" aria-label="Rumat Parfums"><span class="w" data-t="RUMAT"></span><span class="w" data-t="PARFUMS"></span></h1>
+    <p class="tag">Fragancias árabes y de diseñador</p>
+    <div class="sub">Franck · Santa Fe</div>
+  </div>
+  <a class="cue" href="#catalogo"><span>Descubrí la colección</span><i></i></a>
+</header>
+
+<main class="catalog" id="catalogo">
+  <div class="wrap"><div class="reveal"><div class="orn"><b></b></div><h2 class="gold">La colección</h2><p class="lead">Elegí tu esencia</p></div></div>
+  <div class="bar"><div class="wrap"><div id="chips"></div></div></div>
+  <div class="wrap">
+    <div class="promo" id="promo" hidden></div>
+    <div class="tools"><input id="busq" type="search" placeholder="Buscar perfume o marca" aria-label="Buscar perfume o marca"><div class="dd" id="orden"><button type="button" class="ddb" aria-haspopup="listbox" aria-expanded="false" aria-label="Ordenar por precio"><span id="ordenTxt">Ordenar por precio</span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button><ul class="ddl" role="listbox" hidden><li role="option" data-v="" aria-selected="true">Predeterminado</li><li role="option" data-v="asc" aria-selected="false">Precio: menor a mayor</li><li role="option" data-v="desc" aria-selected="false">Precio: mayor a menor</li></ul></div></div>
+    <div class="count" id="count"></div><div id="grid"></div><nav class="pager" id="pager" aria-label="Páginas del catálogo" hidden></nav></div>
+</main>
+
+<section class="gallery">
+  <div class="wrap">
+    <div class="reveal"><div class="orn"><b></b></div><h2 class="gold">Momentos Rumat</h2><p class="lead">Fragancias que se viven</p></div>
+    <div class="gal">
+      <figure class="reveal"><img src="/img/ellos.webp" alt="Los dueños de Rumat Parfums" loading="lazy"></figure>
+    </div>
+  </div>
+</section>
+
+<section id="videoSec" hidden="">
+  <div class="wrap"><div class="reveal"><h2 class="gold">Mirá nuestras fragancias</h2><p class="lead">Un recorrido por la colección</p></div><div class="vbox reveal" id="videoBox"></div></div>
+</section>
+
+<section id="contacto"><div class="wrap">
+  <div class="reveal"><div class="orn"><b></b></div><h2 class="gold">Contacto</h2><p class="lead">Dejanos tu número y te escribimos</p></div>
+  <div class="panel cform reveal"><form id="cf">
+    <div class="full"><label for="cfn">Nombre</label><input id="cfn" required="" placeholder="Tu nombre" autocomplete="name"></div>
+    <div class="full"><label for="cft">Teléfono</label><input id="cft" type="tel" required="" placeholder="Ej: 342 5123456" autocomplete="tel"></div>
+    <div class="full"><button class="go" type="submit">Enviar por WhatsApp</button><div id="cmsg"></div></div>
+  </form></div>
+</div></section>
+
+<footer>
+  <div class="brand gold reveal">RUMAT PARFUMS</div>
+  <p class="reveal">Showroom con reserva previa · Franck, Santa Fe</p>
+  <div class="links reveal">
+    <a href="https://wa.me/5493425264974" target="_blank" rel="noopener">WhatsApp</a>
+    <a href="#contacto">Contacto</a>
+    <a href="#" id="privLink">Privacidad</a>
+    <a href="https://www.instagram.com/rumat.parfums/" target="_blank" rel="noopener">Instagram</a>
+  </div>
+</footer>
+
+<div id="detail"></div>
+<button id="cartBtn" type="button" hidden="" aria-label="Abrir carrito"><span>Carrito</span><b>0</b></button>
+<div id="modal" class=""><div class="sheet" id="sheet"></div></div>
+<div id="adminView" class=""></div>
+
+<script>
+(function(){
+function $(s){return document.querySelector(s)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e}
+function fmt(n){return '$ '+Number(n).toLocaleString('es-AR')}
+function pf(p){return p.dto>0?Math.round(p.precio*(1-p.dto/100)):p.precio}
+function readImg(file,max){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){up(b,'image/jpeg').then(ok,no)},'image/jpeg',.82)};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
+function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode('rumat:'+s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
+var data=[],pago={alias:'',titular:'',qr:''},portada='',adm='',vids=[];
+var pagina=1,lastSig='',PAGE=12,busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
+var LABEL={masculino:'Masculino',femenino:'Femenino',unisex:'Unisex'};
+var METODO={transferencia:'Transferencia (alias)',efectivo:'Efectivo',qr:'QR'};
+var buy=null;
+
+/* hero */
+var n=0;document.querySelectorAll('h1 .w').forEach(function(w){
+  w.textContent='';w.dataset.t.split('').forEach(function(ch){var s=el('span','l',ch);s.style.setProperty('--i',n++);w.appendChild(s)})});
+var P=$('#particles');
+for(var i=0;i<28;i++){var s=document.createElement('span');
+  s.style.cssText='left:'+(Math.random()*100)+'%;--s:'+(2+Math.random()*4)+'px;--d:'+(7+Math.random()*9)+'s;--dl:'+(-Math.random()*14)+'s;--x:'+((Math.random()-.5)*120)+'px';P.appendChild(s)}
+var hero=$('#hero'),tick=false;
+addEventListener('scroll',function(){if(tick)return;tick=true;requestAnimationFrame(function(){
+  hero.style.setProperty('--p',Math.min(scrollY/innerHeight,1).toFixed(3));tick=false})},{passive:true});
+var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.15}):null;
+function observe(){document.querySelectorAll('.reveal:not(.in)').forEach(function(r){io?io.observe(r):r.classList.add('in')})}
+function showCover(){if(portada){hero.style.backgroundImage='url('+portada+')';hero.classList.add('cv')}else{hero.style.backgroundImage='';hero.classList.remove('cv')}}
+observe();
+
+/* video (solo si hay uno cargado) */
+function showVids(){$('#videoBox').innerHTML='';$('#videoSec').hidden=!vids.length;vids.forEach(function(src){
+  var v=document.createElement('video');v.src=src;
+  v.muted=true;v.loop=true;v.controls=true;v.playsInline=true;v.preload='metadata';$('#videoBox').appendChild(v);
+  if(io&&'IntersectionObserver' in window)new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){v.play().catch(function(){})}else v.pause()})},{threshold:.4}).observe(v);
+  observe();
+})}
+
+/* catálogo */
+function renderChips(){
+  var box=$('#chips');box.innerHTML='';
+  [['todos','Todos'],['masculino','Masculino'],['femenino','Femenino'],['unisex','Unisex'],['ofertas','Ofertas'],['vendidos','Más vendidos']].forEach(function(p){
+    var b=el('button','chip',p[1]);b.type='button';b.setAttribute('aria-pressed',filter===p[0]);
+    b.onclick=function(){filter=p[0];renderChips();renderGrid()};box.appendChild(b)})}
+function renderGrid(){
+  var g=$('#grid');g.innerHTML='';
+  function nz(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'')}
+  var list=data.filter(function(p){
+    var ok=filter==='todos'||(filter==='ofertas'?p.dto>0:filter==='vendidos'?!!p.top:p.genero===filter);
+    if(ok&&busq)ok=nz(p.nombre+' '+(p.marca||'')+' '+(p.descripcion||'')).indexOf(nz(busq))>-1;return ok});
+  if(orden)list.sort(function(a,b){return orden==='asc'?pf(a)-pf(b):pf(b)-pf(a)});
+  list=list.filter(function(p){return stockOf(p)>0}).concat(list.filter(function(p){return stockOf(p)<=0}));
+  var sig=filter+'|'+busq+'|'+orden;if(sig!==lastSig){pagina=1;lastSig=sig}
+  var pages=Math.max(1,Math.ceil(list.length/PAGE));if(pagina>pages)pagina=pages;
+  var pg=$('#pager');pg.innerHTML='';pg.hidden=pages<2;
+  var shown=list.slice((pagina-1)*PAGE,pagina*PAGE);
+  $('#count').textContent=data.length?list.length+(list.length===1?' fragancia':' fragancias'):'';
+  if(!list.length){g.appendChild(el('div','empty',data.length?(busq?'No encontramos fragancias con esa búsqueda.':'Todavía no hay fragancias en esta categoría.'):'Muy pronto vas a encontrar acá nuestras fragancias.'));return}
+  shown.forEach(function(p,i){
+    var c=el('article','card');c.style.setProperty('--i',i);
+    if(p.fotos&&p.fotos.length){var ph=el('div','ph');p.fotos.forEach(function(s){var im=el('img');im.src=s;im.alt=p.nombre;im.loading='lazy';ph.appendChild(im)});c.appendChild(ph)}
+    c.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')+(p.top?' · ★ Más vendido':'')));
+    if(p.dto>0)c.appendChild(el('span','off','-'+p.dto+'%'));
+    c.appendChild(el('h3',null,p.nombre));
+    c.appendChild(el('p',null,p.descripcion||''));
+    var pr=el('div','price');if(p.dto>0)pr.appendChild(el('s',null,fmt(p.precio)));pr.appendChild(el('span','gold',fmt(pf(p))));c.appendChild(pr);
+    var st=stockOf(p),b=el('button','buy',st<=0?'Agotado':'Agregar al carrito');b.type='button';b.disabled=st<=0;
+    b.onclick=function(){var ok=addCart(p);b.textContent=ok?'¡Agregado!':'Máximo en stock';setTimeout(function(){b.textContent='Agregar al carrito'},1300)};
+    if(st>0&&st<=5)c.appendChild(el('div','stk','Quedan '+st+(st===1?' unidad':' unidades')));
+    c.appendChild(b);
+    var a=el('a','wa','Consultar por WhatsApp');a.target='_blank';a.rel='noopener';
+    a.href='https://wa.me/'+WA+'?text='+encodeURIComponent('Hola! Quiero consultar por el perfume '+p.nombre);c.appendChild(a);
+    c.style.cursor='pointer';c.onclick=function(e){if(e.target.closest('button,a'))return;location.hash='p-'+p.id};
+    g.appendChild(c)});
+  if(pages>1){
+    function go(n){pagina=n;renderGrid();var t=$('.tools');if(t)t.scrollIntoView({behavior:window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}
+    var ic=function(d){return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+d+'"/></svg>'};
+    var pv=el('button');pv.type='button';pv.innerHTML=ic('M15 5l-7 7 7 7');pv.disabled=pagina<=1;pv.setAttribute('aria-label','Página anterior');pv.onclick=function(){go(pagina-1)};
+    var nx=el('button');nx.type='button';nx.innerHTML=ic('M9 5l7 7-7 7');nx.disabled=pagina>=pages;nx.setAttribute('aria-label','Página siguiente');nx.onclick=function(){go(pagina+1)};
+    pg.appendChild(pv);pg.appendChild(el('span',null,'Página '+pagina+' de '+pages));pg.appendChild(nx)}}
+
+/* compra */
+var cart=[];
+function stockOf(p){return(p.stock===undefined||p.stock===null||p.stock==='')?Infinity:Number(p.stock)}
+function addCart(p){var c=cart.filter(function(x){return x.p===p})[0],ok=false;
+  if(c){if(c.qty<stockOf(p)){c.qty++;ok=true}}else if(stockOf(p)>0){cart.push({p:p,qty:1});ok=true}
+  updCart();return ok}
+function cartTotal(){return cart.reduce(function(a,c){return a+pf(c.p)*c.qty},0)}
+function updCart(){var n=cart.reduce(function(a,c){return a+c.qty},0),b=$('#cartBtn');b.hidden=!n;b.querySelector('b').textContent=n}
+$('#cartBtn').onclick=function(){openBuy()};
+function buyDesc(){return buy&&buy.cupon&&ME&&ME.disponibles>0?Math.round(cartTotal()*ME.desc/100):0}
+function buyTotal(){return cartTotal()-buyDesc()}
+function openBuy(){buy={nombre:ME&&!ME.adm?ME.nombre:'',telefono:'',entrega:'retiro',calle:'',localidad:'',cp:'',provincia:'',nota:'',metodo:'transferencia',cupon:false,done:false};renderBuy();$('#modal').classList.add('open')}
+function closeBuy(){$('#modal').classList.remove('open')}
+$('#modal').onclick=function(e){if(e.target===this)closeBuy()};
+function payInfo(){var b=el('div','info');
+  if(buy.metodo==='transferencia')b.textContent='Te pasamos el alias por WhatsApp al confirmar. Total a transferir: '+fmt(buyTotal())+'.';
+  else b.textContent=buy.entrega==='envio'?'Pagás en efectivo al recibir tu pedido. Coordinamos los detalles por WhatsApp.':'Pagás en efectivo cuando retirás tu pedido en el local. Coordinamos el momento por WhatsApp.';
+  return b}
+function waLink(p){var d=buy.entrega==='envio'?'Envío a: '+[buy.calle,buy.localidad,'CP '+buy.cp,buy.provincia].filter(function(x){return x&&x.trim()}).join(', ')+(buy.nota?' (Nota: '+buy.nota+')':'')+'\nEl costo del envío me lo confirman por acá.':'Retiro en el local';
+  var t='Hola! Hice el pedido #'+p.id+' en la web:\n'+p.lineas.map(function(l){return '• '+l.qty+' x '+l.nombre+' ('+fmt(l.sub)+')'}).join('\n')
+   +'\nSubtotal: '+fmt(p.subtotal)+(p.descuento>0?'\nDescuento por puntos: -'+fmt(p.descuento):'')+'\nTotal: '+fmt(p.total)
+   +'\nEntrega: '+d+'\nForma de pago: '+METODO[buy.metodo]+'\nNombre: '+buy.nombre+'\nTeléfono: '+buy.telefono;
+  return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
+function sheetOpen(title){var s=$('#sheet');s.innerHTML='';var h=el('div','dh');h.appendChild(el('h3','gold',title));
+  var x=el('button','x','✕');x.type='button';x.setAttribute('aria-label','Cerrar');x.onclick=closeBuy;h.appendChild(x);s.appendChild(h);
+  var b=el('div','sb');s.appendChild(b);$('#modal').classList.add('open');return b}
+function renderBuy(){
+  var b=sheetOpen('TU CARRITO');
+  if(buy.done){var p=buy.pedido,d=el('div','done');d.appendChild(el('b','gold','¡PEDIDO #'+p.id+' REGISTRADO!'));
+    d.appendChild(el('div',null,'Total: '+fmt(p.total)+'. Ahora enviá el pedido por WhatsApp para que lo confirmemos.'));
+    var w=el('a','btn2','Enviar pedido por WhatsApp');w.target='_blank';w.rel='noopener';w.href=waLink(p);d.appendChild(w);
+    var k=el('button','btn2 ghost','Seguir mirando');k.type='button';k.onclick=closeBuy;d.appendChild(k);b.appendChild(d);return}
+  if(!cart.length){var e0=el('div','done','Tu carrito está vacío.');var k0=el('button','btn2','Ver perfumes');k0.type='button';k0.onclick=closeBuy;e0.appendChild(k0);b.appendChild(e0);return}
+  cart.forEach(function(c){
+    var pr=el('div','prod'),i=el('div');i.appendChild(el('b',null,c.p.nombre));i.appendChild(el('span',null,fmt(pf(c.p))+' c/u'));pr.appendChild(i);
+    var q=el('div','qty'),m=el('button',null,'−'),pl=el('button',null,'+');m.type=pl.type='button';
+    m.onclick=function(){c.qty--;if(c.qty<1)cart.splice(cart.indexOf(c),1);updCart();renderBuy()};
+    pl.onclick=function(){if(c.qty<stockOf(c.p)){c.qty++;updCart()}renderBuy()};
+    q.appendChild(m);q.appendChild(el('span',null,String(c.qty)));q.appendChild(pl);pr.appendChild(q);b.appendChild(pr)});
+  if(buyDesc()>0){var dd=el('div','total');dd.appendChild(el('span',null,'Descuento por puntos ('+ME.desc+'%)'));dd.appendChild(el('span','gold','-'+fmt(buyDesc())));b.appendChild(dd)}
+  var t=el('div','total');t.appendChild(el('span',null,'Total'));t.appendChild(el('span','gold',fmt(buyTotal())));b.appendChild(t);
+  if(ME&&!ME.adm&&ME.disponibles>0){
+    var cl=el('label','opt'+(buy.cupon?' sel':'')),ck=el('input'),tx=el('div');ck.type='checkbox';ck.checked=buy.cupon;ck.onchange=function(){buy.cupon=ck.checked;renderBuy()};
+    tx.appendChild(el('b',null,'Usar mi '+ME.desc+'% de descuento'));tx.appendChild(el('small',null,'Tenés '+ME.disponibles+(ME.disponibles>1?' disponibles':' disponible')));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
+  else if(!ME){var li=el('button','btn2 ghost','Ingresá para sumar puntos y descuentos');li.type='button';li.onclick=function(){openAccount(function(){renderBuy()})};b.appendChild(li)}
+  function bi(label,key,type,ph,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';i.value=buy[key]||'';if(ph)i.placeholder=ph;if(ac)i.autocomplete=ac;i.oninput=function(){buy[key]=i.value};b.appendChild(i)}
+  bi('Tu nombre','nombre','text','Nombre y apellido','name');
+  bi('Teléfono (WhatsApp)','telefono','tel','Ej: 342 5123456','tel');
+  function opts(title,list,key,after){b.appendChild(el('div','lab',title));var o=el('div','opts');
+    list.forEach(function(x){var lb=el('label','opt'+(buy[key]===x[0]?' sel':'')),rd=el('input'),tx=el('div');rd.type='radio';rd.name=key;rd.checked=buy[key]===x[0];
+      rd.onchange=function(){buy[key]=x[0];renderBuy()};tx.appendChild(el('b',null,x[1]));tx.appendChild(el('small',null,x[2]));lb.appendChild(rd);lb.appendChild(tx);o.appendChild(lb)});b.appendChild(o)}
+  opts('Entrega',[['retiro','Retiro en el local','Franck, Santa Fe'],['envio','Envío a domicilio','Te confirmamos el costo por WhatsApp']],'entrega');
+  if(buy.entrega==='envio'){
+    bi('Calle y número','calle','text','Ej: San Martín 123','street-address');bi('Localidad','localidad','text','','address-level2');
+    bi('Código postal','cp','text','','postal-code');bi('Provincia','provincia','text','Santa Fe','address-level1');bi('Referencias o notas (opcional)','nota','text','Piso, timbre, horario…');
+    b.appendChild(el('div','info','El costo del envío lo calcula el local y te lo confirma por WhatsApp.'))}
+  opts('Forma de pago',[['transferencia','Transferencia','Te pasamos el alias por WhatsApp'],['efectivo','Efectivo',buy.entrega==='envio'?'Pagás al recibir':'Pagás al retirar en el local']],'metodo');
+  b.appendChild(payInfo());
+  var pv=el('div','info');pv.appendChild(document.createTextNode('Usamos tus datos solo para gestionar este pedido. '));
+  var pa=el('a',null,'Política de privacidad');pa.onclick=function(){openPriv(renderBuy)};pv.appendChild(pa);b.appendChild(pv);
+  var em=el('div','lab');b.appendChild(em);
+  var ok=el('button','btn2','Confirmar pedido');ok.type='button';
+  ok.onclick=function(){var tel=(buy.telefono||'').replace(/\D/g,''),n=(buy.nombre||'').trim(),er='';
+    if(!n)er='Escribí tu nombre.';else if(tel.length<8)er='Escribí un teléfono válido.';
+    else if(buy.entrega==='envio'&&(!(buy.calle||'').trim()||!(buy.localidad||'').trim()||!(buy.cp||'').trim()))er='Completá la dirección de envío.';
+    if(er){em.textContent=er;return}
+    ok.disabled=true;em.textContent='Registrando tu pedido…';
+    api('pedidos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:n,telefono:buy.telefono,entrega:buy.entrega,
+      direccion:buy.entrega==='envio'?{calle:buy.calle,localidad:buy.localidad,cp:buy.cp,provincia:buy.provincia,nota:buy.nota}:null,
+      metodo:buy.metodo,cupon:!!buy.cupon,items:cart.map(function(c){return{id:c.p.id,qty:c.qty}})})})
+    .then(function(p){buy.nombre=n;buy.done=true;buy.pedido=p;cart=[];updCart();loadMe();renderBuy();
+      try{window.open($('#sheet a.btn2').href,'_blank','noopener')}catch(e){}})
+    .catch(function(e){ok.disabled=false;em.textContent=e.message||'No se pudo registrar el pedido.'})};
+  b.appendChild(ok)}
+/* cuenta y privacidad */
+function openPriv(back){var b=sheetOpen('POLÍTICA DE PRIVACIDAD');b.className='sb pol';
+  [['Responsable','Rumat Parfums, Franck, Santa Fe. Contacto por WhatsApp o por Instagram (@rumat.parfums).'],
+   ['Qué datos pedimos','Nombre, teléfono, correo electrónico (solo si creás una cuenta), contraseña (se guarda cifrada y nadie puede verla), dirección de entrega (solo si elegís envío) y el detalle de tus pedidos.'],
+   ['Para qué los usamos','Para gestionar tus pedidos, coordinar el pago y la entrega por WhatsApp, y llevar tus puntos y descuentos. Usamos tu correo solo para tu cuenta. No vendemos tus datos ni te enviamos publicidad sin tu consentimiento.'],
+   ['Dónde se guardan','En servidores de proveedores externos (Neon para la base de datos y Vercel para el sitio), que pueden estar fuera de la Argentina.'],
+   ['Tus derechos','Podés pedirnos acceder a tus datos, corregirlos o eliminar tu cuenta escribiéndonos por WhatsApp. La Agencia de Acceso a la Información Pública es el organismo de control de la Ley 25.326 de Protección de los Datos Personales y atiende los reclamos.'],
+   ['Cuánto tiempo','Mientras tengas una cuenta o haya pedidos para gestionar. Podés pedir la baja cuando quieras.']]
+  .forEach(function(x){var p=el('p');p.appendChild(el('b',null,x[0]+'. '));p.appendChild(document.createTextNode(x[1]));b.appendChild(p)});
+  var v=el('button','btn2','Volver');v.type='button';v.onclick=function(){back?back():closeBuy()};b.appendChild(v)}
+function openAccount(after,tab){
+  var b=sheetOpen(ME?'MI CUENTA':'TU CUENTA');
+  if(ME){b.appendChild(el('div','info',ME.nombre+(ME.email?' · '+ME.email:'')));
+    if(ME.adm){var g=el('button','btn2','Ir al administrador');g.type='button';g.onclick=function(){closeBuy();location.hash='admin'};b.appendChild(g)}
+    else{b.appendChild(el('div','lab','Tus puntos'));var pr=el('div','prog'),bar=el('i');bar.style.width=Math.round((ME.meta-ME.falta)/ME.meta*100)+'%';pr.appendChild(bar);b.appendChild(pr);
+      b.appendChild(el('div',null,'Compras confirmadas: '+fmt(ME.gasto)+'. Te faltan '+fmt(ME.falta)+' para ganar un '+ME.desc+'% de descuento.'));
+      b.appendChild(el('div','info','Descuentos disponibles: '+ME.disponibles+(ME.disponibles?'. Lo podés usar en tu próximo carrito.':'')))}
+    var o=el('button','btn2 ghost','Cerrar sesión');o.type='button';o.onclick=function(){setTok('');ME=null;showMe();if(location.hash==='#admin')location.hash='';closeBuy()};b.appendChild(o);return}
+  var reg=tab==='reg',row=el('div','opts');
+  [['in','Ingresar'],['reg','Crear cuenta']].forEach(function(t){var k=el('button','chip',t[1]);k.type='button';k.setAttribute('aria-pressed',(t[0]==='reg')===reg);k.onclick=function(){openAccount(after,t[0])};row.appendChild(k)});b.appendChild(row);
+  b.appendChild(el('div','info','Tener cuenta es opcional: sirve para sumar puntos y descuentos. Podés comprar sin cuenta.'));
+  var F={};function bi(label,key,type,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';if(ac)i.autocomplete=ac;F[key]=i;b.appendChild(i)}
+  if(reg)bi('Tu nombre','nombre','text','name');bi('Correo electrónico','email','email','email');bi('Contraseña'+(reg?' (mínimo 8 caracteres)':''),'password','password',reg?'new-password':'current-password');
+  if(!reg){var fo=el('div','info'),fa=el('a',null,'¿Olvidaste tu contraseña?');fa.onclick=function(){openForgot(after)};fo.appendChild(fa);b.appendChild(fo)}
+  var ck;if(reg){var cl=el('label','opt'),tx=el('div');ck=el('input');ck.type='checkbox';tx.appendChild(document.createTextNode('Acepto la '));var a=el('a',null,'Política de privacidad');a.onclick=function(e){e.preventDefault();openPriv(function(){openAccount(after,'reg')})};tx.appendChild(a);tx.appendChild(el('small',null,'Usamos tu correo solo para tu cuenta y tus puntos.'));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
+  var em=el('div','lab');b.appendChild(em);var go=el('button','btn2',reg?'Crear cuenta':'Ingresar');go.type='button';
+  go.onclick=function(){go.disabled=true;em.textContent='Un momento…';
+    api(reg?'registro':'login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:F.email.value,password:F.password.value,nombre:reg?F.nombre.value:undefined,acepta:reg?ck.checked:undefined})})
+    .then(function(j){setTok(j.token);return loadMe()}).then(function(){if(after)after();else openAccount()})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo.'})};b.appendChild(go)}
+function openForgot(after){var b=sheetOpen('RECUPERAR CONTRASEÑA');
+  b.appendChild(el('div','info','Escribí el correo de tu cuenta y te enviamos un enlace para elegir una contraseña nueva.'));
+  b.appendChild(el('div','lab','Correo electrónico'));var i=el('input','fld');i.type='email';i.autocomplete='email';b.appendChild(i);
+  var em=el('div','lab');b.appendChild(em);var go=el('button','btn2','Enviar enlace');go.type='button';
+  go.onclick=function(){if(!i.value.trim()){em.textContent='Escribí tu correo.';return}go.disabled=true;em.textContent='Enviando…';
+    api('olvide',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:i.value})})
+    .then(function(){em.textContent='Si ese correo tiene una cuenta, te enviamos un mensaje con el enlace. Revisá también la carpeta de spam. El enlace vale por 1 hora.';go.hidden=true})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo enviar.'})};b.appendChild(go);
+  var v=el('button','btn2 ghost','Volver');v.type='button';v.onclick=function(){openAccount(after)};b.appendChild(v)}
+function openReset(token){var b=sheetOpen('NUEVA CONTRASEÑA');
+  b.appendChild(el('div','info','Elegí una contraseña nueva para tu cuenta (mínimo 8 caracteres).'));
+  function bi(l){b.appendChild(el('div','lab',l));var i=el('input','fld');i.type='password';i.autocomplete='new-password';b.appendChild(i);return i}
+  var p1=bi('Contraseña nueva'),p2=bi('Repetí la contraseña'),em=el('div','lab');b.appendChild(em);
+  var go=el('button','btn2','Guardar contraseña');go.type='button';
+  go.onclick=function(){if(p1.value.length<8){em.textContent='La contraseña debe tener al menos 8 caracteres.';return}if(p1.value!==p2.value){em.textContent='Las contraseñas no coinciden.';return}
+    go.disabled=true;em.textContent='Guardando…';
+    api('restablecer',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token,password:p1.value})})
+    .then(function(j){setTok(j.token);try{history.replaceState(null,'',location.pathname)}catch(e){}return loadMe()}).then(function(){openAccount()})
+    .catch(function(e){go.disabled=false;em.textContent=e.message||'No se pudo guardar.';if(e.status===400&&/enlace/.test(e.message)){var n=el('button','btn2 ghost','Pedir otro enlace');n.type='button';n.onclick=function(){openForgot()};b.appendChild(n)}})};b.appendChild(go)}
+/* pedidos (administrador) */
+var PED=[],pedEst='pendiente';
+function loadPedidos(box,cached){box.innerHTML='';box.appendChild(el('h4',null,'PEDIDOS'));
+  if(!cached){box.appendChild(el('small',null,'Cargando…'));api('pedidos').then(function(r){PED=r.pedidos||[];loadPedidos(box,true)}).catch(function(e){box.appendChild(el('small',null,e.message))});return}
+  var tabs=el('div','opts');[['pendiente','Pendientes'],['pagado','Pagados'],['cancelado','Cancelados'],['todos','Todos']].forEach(function(t){var k=el('button','chip',t[1]);k.type='button';k.setAttribute('aria-pressed',pedEst===t[0]);k.onclick=function(){pedEst=t[0];loadPedidos(box,true)};tabs.appendChild(k)});
+  var rf=el('button','sm','Actualizar');rf.type='button';rf.onclick=function(){loadPedidos(box)};tabs.appendChild(rf);box.appendChild(tabs);
+  var L=PED.filter(function(p){return pedEst==='todos'||p.estado===pedEst});
+  if(!L.length)box.appendChild(el('small',null,'No hay pedidos en esta lista.'));
+  L.forEach(function(p){var r=el('div','lrow'),i=el('div'),d=p.direccion||{};
+    i.appendChild(el('b',null,'#'+p.id+' · '+p.nombre+' · '+p.telefono));
+    i.appendChild(el('small',null,p.items.map(function(x){return x.qty+' x '+x.nombre}).join(', ')));
+    i.appendChild(el('small',null,p.entrega==='envio'?'Envío: '+[d.calle,d.localidad,'CP '+d.cp,d.provincia].filter(Boolean).join(', ')+(d.nota?' · Nota: '+d.nota:''):'Retiro en el local'));
+    i.appendChild(el('small',null,'Total '+fmt(p.total)+(p.descuento>0?' (con '+fmt(p.descuento)+' de descuento por puntos)':'')+' · '+METODO[p.metodo]+' · '+new Date(p.creado).toLocaleString('es-AR')+' · '+p.estado.toUpperCase()));
+    if(p.u_email)i.appendChild(el('small',null,'Cuenta: '+p.u_nombre+' ('+p.u_email+') · acumulado pagado '+fmt(p.u_gasto)));
+    r.appendChild(i);
+    if(p.estado==='pendiente'){var a=el('div','acts');
+      [['Marcar pagado','sm','pagado'],['Cancelar','sm red','cancelado']].forEach(function(x){var k=el('button',x[1],x[0]);k.type='button';
+        k.onclick=function(){if(k.dataset.s){api('pedidos/'+p.id+'/estado',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({estado:x[2]})}).then(function(){loadPedidos(box)}).catch(function(e){k.textContent=e.message})}
+          else{k.dataset.s='1';k.textContent='¿Seguro?';setTimeout(function(){k.dataset.s='';k.textContent=x[0]},3000)}};a.appendChild(k)});r.appendChild(a)}
+    box.appendChild(r)})}
+
+function flag(v){try{v?sessionStorage.setItem('rumat_admin','1'):sessionStorage.removeItem('rumat_admin')}catch(e){}}
+function route(){
+  var want=location.hash==='#admin',open=want&&ME&&ME.adm;
+  $('#adminView').classList.toggle('open',!!open);document.body.style.overflow=open?'hidden':'';
+  if(open)renderAdmin();else if(want)location.hash=''}
+addEventListener('hashchange',route);
+/* detalle de perfume */
+function closeDetail(){location.hash=''}
+function openDetail(p){
+  var d=$('#detail');d.innerHTML='';
+  var w=el('div','dw'),bk=el('button','dback','← Volver');bk.type='button';bk.onclick=closeDetail;w.appendChild(bk);
+  var g=el('div','dgrid'),L=el('div'),R=el('div','dr'),fs=p.fotos&&p.fotos.length?p.fotos:[];
+  if(fs.length){
+    var main=el('img','dmain');main.src=fs[0];main.alt=p.nombre;L.appendChild(main);
+    if(fs.length>1){var th=el('div','dth');fs.forEach(function(s,k){var t=el('img');t.src=s;t.alt=p.nombre+' '+(k+1);if(!k)t.className='on';
+      t.onclick=function(){main.src=s;th.querySelectorAll('img').forEach(function(x){x.classList.remove('on')});t.classList.add('on')};th.appendChild(t)});L.appendChild(th)}
+  }else L.appendChild(el('div','dnone','Sin fotos todavía'));
+  R.appendChild(el('span','badge',LABEL[p.genero]+(p.marca?' · '+p.marca:'')+(p.top?' · ★ Más vendido':'')));
+  R.appendChild(el('h2','gold',p.nombre));
+  var pr=el('div','dprice');if(p.dto>0)pr.appendChild(el('s',null,fmt(p.precio)));pr.appendChild(el('span','gold',fmt(pf(p))));
+  if(p.dto>0)pr.appendChild(el('span','off2','-'+p.dto+'% OFF'));R.appendChild(pr);
+  var st=stockOf(p);if(st<=0)R.appendChild(el('div','stk','Agotado'));else if(st<=5)R.appendChild(el('div','stk','Quedan '+st+(st===1?' unidad':' unidades')));
+  R.appendChild(el('p','ddesc',p.descripcion||'Sin descripción.'));
+  var add=el('button','buy',st<=0?'Agotado':'Agregar al carrito');add.type='button';add.disabled=st<=0;
+  add.onclick=function(){var ok=addCart(p);add.textContent=ok?'¡Agregado!':'Máximo en stock';setTimeout(function(){add.textContent='Agregar al carrito'},1300)};
+  var now=el('button','btn2 ghost','Comprar ahora');now.type='button';now.disabled=st<=0;now.onclick=function(){addCart(p);if(cart.length)openBuy()};
+  var wa=el('a','wa','Consultar por WhatsApp');wa.target='_blank';wa.rel='noopener';wa.href='https://wa.me/'+WA+'?text='+encodeURIComponent('Hola! Quiero consultar por el perfume '+p.nombre);
+  R.appendChild(add);R.appendChild(now);R.appendChild(wa);
+  R.appendChild(el('div','lab','Retiro en el local · Franck, Santa Fe'));
+  g.appendChild(L);g.appendChild(R);w.appendChild(g);d.appendChild(w);
+  d.classList.add('open');d.scrollTop=0;document.body.style.overflow='hidden'}
+function routeD(){var m=/^#p-(.+)$/.exec(location.hash),d=$('#detail'),p=m&&data.filter(function(x){return x.id===m[1]})[0];
+  if(p)openDetail(p);else{d.classList.remove('open');document.body.style.overflow=$('#adminView').classList.contains('open')?'hidden':''}}
+addEventListener('hashchange',routeD);
+addEventListener('keydown',function(e){if(e.key==='Escape'&&$('#detail').classList.contains('open'))closeDetail()});
+$('#adminBtn').onclick=function(){location.hash='admin'};
+function renderAdmin(){
+  var v=$('#adminView');v.innerHTML='';
+  var w=el('div','aw');v.appendChild(w);
+  var h=el('div','ah');h.appendChild(el('h2','gold','ADMINISTRADOR'));
+  var bk=el('button','back','← Volver a la tienda');bk.type='button';bk.onclick=function(){flag(false);editId=null;location.hash=''};h.appendChild(bk);w.appendChild(h);
+  var op=el('div','panel');w.appendChild(op);loadPedidos(op);
+  var ed=data.filter(function(p){return p.id===editId})[0];
+  var pn=el('div','panel');pn.appendChild(el('h4',null,ed?'EDITAR PERFUME':'CARGAR PERFUME'));
+  var f=document.createElement('form');
+  function field(lbl,node,full){var d=el('div',full?'full':'');d.appendChild(el('label',null,lbl));d.appendChild(node);f.appendChild(d)}
+  var nombre=el('input');nombre.required=true;nombre.placeholder='Ej: Khamrah';nombre.value=ed?ed.nombre:'';
+  var gen=el('select');[['masculino','Masculino'],['femenino','Femenino'],['unisex','Unisex']].forEach(function(o){var op=el('option',null,o[1]);op.value=o[0];gen.appendChild(op)});gen.value=ed?ed.genero:'masculino';
+  var precio=el('input');precio.type='number';precio.min='0';precio.step='any';precio.required=true;precio.placeholder='0';precio.value=ed?ed.precio:'';
+  var desc=el('textarea');desc.rows=4;desc.placeholder='Notas, duración, para qué ocasión…';desc.value=ed?ed.descripcion:'';
+  var marca=el('input');marca.placeholder='Ej: Lattafa';marca.value=ed&&ed.marca?ed.marca:'';
+  var tp=el('input');tp.type='checkbox';tp.checked=!!(ed&&ed.top);var tl=el('label','chk');tl.appendChild(tp);tl.appendChild(document.createTextNode(' Marcar como más vendido'));
+  var stk=el('input');stk.type='number';stk.min='0';stk.placeholder='Vacío = sin límite';stk.value=ed&&ed.stock!=null?ed.stock:'';
+  var dsc=el('input');dsc.type='number';dsc.min='0';dsc.max='90';dsc.placeholder='0 = sin descuento';dsc.value=ed&&ed.dto?ed.dto:'';
+  var fotos=ed&&ed.fotos?ed.fotos.slice():[],pw=el('div','pv'),fi=el('input'),fd=el('div');fi.type='file';fi.accept='image/*';fi.multiple=true;
+  function drawPv(){pw.innerHTML='';fotos.forEach(function(s,k){var t=el('div','pt'),im=el('img'),x=el('button',null,'×');im.src=s;x.type='button';x.onclick=function(){fotos.splice(k,1);drawPv()};t.appendChild(im);t.appendChild(x);pw.appendChild(t)})}
+  fi.onchange=function(){Array.from(fi.files).forEach(function(fl){readImg(fl,900).then(function(u){fotos.push(u);drawPv()})});fi.value=''};
+  drawPv();fd.appendChild(fi);fd.appendChild(pw);
+  field('Nombre del perfume',nombre);field('Marca',marca);field('Categoría',gen);field('Precio ($)',precio);field('Descuento (%)',dsc);field('Stock (unidades)',stk);field('Más vendidos',tl);field('Fotos (podés sumar varias)',fd,true);field('Descripción',desc,true);
+  var act=el('div','full'),go=el('button','go',ed?'Guardar cambios':'Agregar perfume');go.type='submit';act.appendChild(go);
+  if(ed){var cc=el('button','cancel','Cancelar');cc.type='button';cc.onclick=function(){editId=null;renderAdmin()};act.appendChild(cc)}
+  f.appendChild(act);
+  f.onsubmit=function(e){e.preventDefault();
+    var o={nombre:nombre.value.trim(),marca:marca.value.trim(),genero:gen.value,precio:Number(precio.value),stock:stk.value===''?null:Math.max(0,Math.floor(Number(stk.value)||0)),dto:Math.min(90,Math.max(0,Number(dsc.value)||0)),fotos:fotos,descripcion:desc.value.trim(),top:tp.checked};
+    if(ed){Object.assign(ed,o)}else{o.id=Date.now().toString(36);data.push(o)}
+    editId=null;save('Guardando…')};
+  pn.appendChild(f);w.appendChild(pn);
+  var lp=el('div','panel');lp.appendChild(el('h4',null,'PERFUMES CARGADOS ('+data.length+')'));
+  if(!data.length)lp.appendChild(el('small',null,'Todavía no cargaste ningún perfume.'));
+  data.slice().reverse().forEach(function(p){
+    var r=el('div','lrow'),i=el('div');i.appendChild(el('b',null,p.nombre));
+    i.appendChild(el('small',null,LABEL[p.genero]+(p.marca?' · '+p.marca:'')+' · '+fmt(p.precio)+(p.dto>0?' → '+fmt(pf(p))+' (-'+p.dto+'%)':'')+(p.fotos&&p.fotos.length?' · '+p.fotos.length+' foto(s)':'')+(p.stock!=null?' · stock: '+p.stock:'')+(p.top?' · ★ más vendido':'')));if(p.descripcion)i.appendChild(el('small',null,p.descripcion));r.appendChild(i);
+    var a=el('div','acts'),e1=el('button','sm','Editar'),e2=el('button','sm red','Eliminar');e1.type=e2.type='button';
+    e1.onclick=function(){editId=p.id;renderAdmin();v.scrollTop=0};
+    e2.onclick=function(){if(e2.dataset.s){data=data.filter(function(x){return x.id!==p.id});save('Eliminando…')}else{e2.dataset.s='1';e2.textContent='¿Seguro?';setTimeout(function(){e2.dataset.s='';e2.textContent='Eliminar'},3000)}};
+    var e4=el('button','sm',p.top?'Quitar ★':'★ Más vendido');e4.type='button';e4.onclick=function(){p.top=!p.top;save('Guardando…')};a.appendChild(e4);
+    if(p.dto>0){var e3=el('button','sm','Quitar desc.');e3.type='button';e3.onclick=function(){p.dto=0;save('Guardando…')};a.appendChild(e3)}
+    a.appendChild(e1);a.appendChild(e2);r.appendChild(a);lp.appendChild(r)});
+  w.appendChild(lp);
+  var cp2=el('div','panel');cp2.appendChild(el('h4',null,'FOTO DE PORTADA'));
+  var ci=el('input');ci.type='file';ci.accept='image/*';cp2.appendChild(ci);
+  ci.onchange=function(){if(ci.files[0])readImg(ci.files[0],1600).then(function(u){portada=u;save('Guardando portada…')})};
+  if(portada){var rb=el('button','sm red','Quitar portada');rb.type='button';rb.style.marginTop='10px';rb.onclick=function(){portada='';save('Guardando…')};cp2.appendChild(rb)}
+  w.appendChild(cp2);
+  var vp=el('div','panel');vp.appendChild(el('h4',null,'VIDEOS (hasta 2, de máx. 4 MB cada uno)'));
+  var vi=el('input'),vm=el('div','lab');vi.type='file';vi.accept='video/*';vp.appendChild(vi);vp.appendChild(vm);
+  vi.onchange=function(){var fl=vi.files[0];if(!fl)return;
+    if(vids.length>=2){vm.textContent='Ya hay 2 videos: quitá uno primero.';vi.value='';return}
+    if(fl.size>4*1024*1024){vm.textContent='Ese video pesa más de 4 MB. Probá con uno más corto o comprimido.';vi.value='';return}
+    vm.textContent='Subiendo video…';up(fl,fl.type||'video/mp4').then(function(u){vids.push(u);save('Guardando video…')}).catch(function(){vm.textContent='No se pudo subir el video.'})};
+  vids.forEach(function(s,k){var rb2=el('button','sm red','Quitar video '+(k+1));rb2.type='button';rb2.style.cssText='margin:10px 8px 0 0';rb2.onclick=function(){vids.splice(k,1);save('Guardando…')};vp.appendChild(rb2)});
+  w.appendChild(vp);var m=el('div');m.id='amsg';w.appendChild(m)}
+
+async function save(text){var m=$('#amsg');if(m)m.textContent=text;
+  try{await api('store',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({items:data,portada:portada,videos:vids})});
+    renderChips();renderGrid();showCover();showVids();renderAdmin();var m2=$('#amsg');if(m2)m2.textContent='Guardado \u2713'}
+  catch(e){if(m)m.textContent=TOKEN?'No se pudo guardar. Prob\u00e1 de nuevo.':'La sesi\u00f3n venci\u00f3: volv\u00e9 a entrar.';if(!TOKEN)location.hash=''}}
+
+/* contacto */
+(function(){var f=$('#cf');if(!f)return;
+  f.onsubmit=function(e){e.preventDefault();
+    var n=$('#cfn').value.trim(),t=$('#cft').value.replace(/[^\d+]/g,''),m=$('#cmsg');
+    if(t.replace(/\D/g,'').length<8){m.textContent='Revisá el número de teléfono.';return}
+    var txt='Hola! Soy '+n+'. Mi teléfono es '+t+'. Quiero que me contacten'+'.';
+    var a=document.createElement('a');a.href='https://wa.me/'+WA+'?text='+encodeURIComponent(txt);a.target='_blank';a.rel='noopener';
+    document.body.appendChild(a);a.click();a.remove();m.textContent='Se abrió WhatsApp: enviá el mensaje y te contactamos.'}})();
+
+/* conexión con el servidor */
+var TOKEN='';try{TOKEN=localStorage.getItem('rumat_tk')||''}catch(e){}
+function setTok(t){TOKEN=t||'';try{t?localStorage.setItem('rumat_tk',t):localStorage.removeItem('rumat_tk')}catch(e){}}
+function api(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers);if(TOKEN)opt.headers.Authorization='Bearer '+TOKEN;
+  return fetch('/api/'+path,opt).then(function(r){return r.json().catch(function(){return{}}).then(function(j){
+    if(r.status===401&&TOKEN&&path!=='login'){setTok('');ME=null;showMe()}
+    if(!r.ok){var e=new Error(j.error||'Error '+r.status);e.status=r.status;throw e}return j})})}
+function up(blob,type){return fetch('/api/media',{method:'POST',headers:{'Content-Type':type,Authorization:'Bearer '+TOKEN},body:blob})
+  .then(function(r){if(!r.ok)throw new Error('up');return r.json()}).then(function(j){return j.url})}
+function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ingresar';$('#adminBtn').hidden=!(ME&&ME.adm);renderPromo()}
+function renderPromo(){var p=$('#promo');p.innerHTML='';
+  if(ME&&ME.adm){p.hidden=true;return}
+  var t=el('p'),b=el('button',null,ME?'Ver mi cuenta':'Crear cuenta');b.type='button';
+  if(ME){t.appendChild(el('b',null,'Tus puntos: '));t.appendChild(document.createTextNode(ME.disponibles>0?'tenés '+ME.disponibles+(ME.disponibles>1?' descuentos':' descuento')+' del '+ME.desc+'% para usar en tu próximo pedido.':'te faltan '+fmt(ME.falta)+' en compras para ganar un '+ME.desc+'% de descuento.'));b.onclick=function(){openAccount()}}
+  else{t.appendChild(el('b',null,'Creá tu cuenta y sumá puntos. '));t.appendChild(document.createTextNode('Cada $159.000 en compras te da un 10% de descuento en tu próxima compra.'));b.onclick=function(){openAccount(null,'reg')}}
+  p.appendChild(t);p.appendChild(b);p.hidden=false}
+function loadMe(){if(!TOKEN){ME=null;showMe();return Promise.resolve()}return api('yo').then(function(m){ME=m}).catch(function(){ME=null}).then(showMe)}
+$('#userBtn').onclick=function(){openAccount()};
+$('#busq').oninput=function(){busq=this.value;renderGrid()};
+(function(){var dd=$('#orden'),btn=dd.querySelector('.ddb'),ul=dd.querySelector('.ddl'),txt=$('#ordenTxt'),items=[].slice.call(ul.children),sel=0,hi=0;
+  function paint(){items.forEach(function(x,i){x.classList.toggle('act',i===hi)})}
+  function open(v){ul.hidden=!v;btn.setAttribute('aria-expanded',v?'true':'false');if(v){hi=sel;paint()}}
+  function pick(i){sel=i;orden=items[i].dataset.v;txt.textContent=i?items[i].textContent:'Ordenar por precio';items.forEach(function(x,j){x.setAttribute('aria-selected',j===i?'true':'false')});open(false);renderGrid()}
+  btn.onclick=function(){open(ul.hidden)};
+  items.forEach(function(x,i){x.onclick=function(){pick(i)};x.onmouseenter=function(){hi=i;paint()}});
+  btn.onkeydown=function(e){
+    if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if(ul.hidden)open(true);else{hi=(hi+(e.key==='ArrowDown'?1:items.length-1))%items.length;paint()}}
+    else if(e.key==='Enter'&&!ul.hidden){e.preventDefault();pick(hi)}
+    else if(e.key==='Escape')open(false)};
+  document.addEventListener('click',function(e){if(!dd.contains(e.target))open(false)})})();
+$('#privLink').onclick=function(e){e.preventDefault();openPriv()};
+Promise.all([
+  api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
+    .catch(function(){var c=$('#count');if(c)c.textContent='No se pudo cargar el catálogo. Recargá la página.'}),
+  loadMe()
+]).then(function(){showCover();showVids();renderChips();renderGrid();route();routeD();
+  var rt=new URLSearchParams(location.search).get('reset');if(rt)openReset(rt)});
+})();
+</script>
+
+
+</body></html>

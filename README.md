@@ -14,6 +14,7 @@ Los perfumes, fotos y videos se guardan en la base de datos de Neon.
      - `DATABASE_URL`: la connection string de Neon.
      - `ADMIN_EMAIL`: el correo de la cuenta del dueño (la única que ve el administrador).
      - `ADMIN_PASSWORD`: la contraseña de esa cuenta.
+     - `GMAIL_USER` y `GMAIL_APP_PASSWORD`: el Gmail desde el que se mandan los correos de recuperación de contraseña y su "contraseña de aplicación" de 16 letras (Cuenta de Google > Seguridad > Verificación en 2 pasos > Contraseñas de aplicaciones).
      - `SESSION_SECRET`: un texto largo y al azar (para firmar las sesiones).
 4. Tocá **Deploy**. Cuando termine, abrí la dirección que te da Vercel.
 5. Para entrar al administrador, tocá "Admin" al final de la página (o agregá `#admin` a la dirección).
@@ -27,7 +28,8 @@ Los perfumes, fotos y videos se guardan en la base de datos de Neon.
 - Las fotos se achican solas. Los videos pueden pesar hasta 4 MB (límite de Vercel).
 - Cualquier cambio en el administrador se ve al instante para todos los visitantes.
 - El stock no baja solo con cada pedido: se actualiza desde el administrador.
-- Los clientes pueden crear cuenta (opcional) para sumar puntos. Por ahora no hay recuperación de contraseña por mail.
+- Los clientes pueden crear cuenta (opcional) para sumar puntos. Si olvidan la contraseña, se les envía un enlace por mail (vale 1 hora). Gmail permite unos 500 correos por día.
+- El catálogo muestra 12 perfumes por página, y los que no tienen stock van siempre al final.
 - Los pagos se coordinan por WhatsApp (transferencia o efectivo). El costo del envío lo calcula el local y lo confirma por WhatsApp.
 - El número de WhatsApp está en `public/index.html` (variable `WA`).
 
