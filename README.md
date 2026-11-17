@@ -24,12 +24,13 @@ Los perfumes, fotos y videos se guardan en la base de datos de Neon.
 
 - Entrar al administrador: tocá "Ingresar" (arriba a la derecha), usá `ADMIN_EMAIL` y `ADMIN_PASSWORD`, y después "Ir al administrador".
 - Cambiar la contraseña del dueño: cambiá `ADMIN_PASSWORD` en Vercel y hacé "Redeploy".
-- Pedidos: cada pedido queda guardado. En el administrador, "Marcar pagado" suma el monto a los puntos del cliente (10% de descuento cada $159.000).
+- Pedidos: cada pedido queda guardado. En el administrador, "Marcar pagado" suma el monto al gasto del cliente y le va subiendo de nivel. Niveles: $159.000 → 10%, $318.000 → 20%, $477.000 → 50% de descuento (cada descuento se usa una sola vez, uno por pedido). Los montos y porcentajes se cambian en la lista `NIVELES` al principio de `api/index.js`.
 - Las fotos se achican solas. Los videos pueden pesar hasta 4 MB (límite de Vercel).
 - Cualquier cambio en el administrador se ve al instante para todos los visitantes.
 - El stock no baja solo con cada pedido: se actualiza desde el administrador.
 - Los clientes pueden crear cuenta (opcional) para sumar puntos. Si olvidan la contraseña, se les envía un enlace por mail (vale 1 hora). Gmail permite unos 500 correos por día.
-- El catálogo muestra 12 perfumes por página, y los que no tienen stock van siempre al final.
+- El texto en movimiento (arriba del catálogo) se edita en la lista `frases` de la función `showMarquee` en `public/index.html`.
+- El catálogo muestra 12 perfumes por página (2 por fila en el celular), y los que no tienen stock van siempre al final.
 - Los pagos se coordinan por WhatsApp (transferencia o efectivo). El costo del envío lo calcula el local y lo confirma por WhatsApp.
 - El número de WhatsApp está en `public/index.html` (variable `WA`).
 
