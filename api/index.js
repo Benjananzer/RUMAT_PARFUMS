@@ -5,8 +5,9 @@ const scrypt = require('util').promisify(crypto.scrypt);
 
 const MAX = 4.4 * 1024 * 1024; // límite de Vercel para el cuerpo: 4,5 MB
 const TIPOS = ['image/jpeg', 'image/png', 'image/webp', 'video/mp4', 'video/webm', 'video/quicktime'];
-const META = 159000; // $ acumulados (en compras pagadas) para ganar un descuento
-const DESC = 10;     // % de descuento que se gana
+// Niveles: al juntar este gasto acumulado (compras pagadas) se gana un descuento de un solo uso.
+// Para cambiar montos o porcentajes, editá solamente esta lista.
+const NIVELES = [{ meta: 159000, desc: 10 }, { meta: 318000, desc: 20 }, { meta: 477000, desc: 50 }];
 let sql, ready;
 
 function db() { if (!sql) sql = neon(process.env.DATABASE_URL); return sql; }
@@ -17,7 +18,9 @@ function init() {
     await q`CREATE TABLE IF NOT EXISTS media (id text PRIMARY KEY, tipo text NOT NULL, datos text NOT NULL, creado timestamptz NOT NULL DEFAULT now())`;
     await q`CREATE TABLE IF NOT EXISTS usuarios (id text PRIMARY KEY, email text UNIQUE NOT NULL, nombre text NOT NULL, clave text NOT NULL, gasto bigint NOT NULL DEFAULT 0, usados int NOT NULL DEFAULT 0, creado timestamptz NOT NULL DEFAULT now())`;
     await q`CREATE TABLE IF NOT EXISTS resets (id serial PRIMARY KEY, usuario_id text NOT NULL, token_hash text NOT NULL, expira timestamptz NOT NULL, creado timestamptz NOT NULL DEFAULT now())`;
+    await q`ALTER TABLE usuarios ADD COLUMN IF NOT EXISTS niveles_usados int NOT NULL DEFAULT 0`;
     await q`CREATE TABLE IF NOT EXISTS pedidos (id serial PRIMARY KEY, usuario_id text, nombre text NOT NULL, telefono text NOT NULL, entrega text NOT NULL, direccion jsonb, items jsonb NOT NULL, subtotal bigint NOT NULL, descuento bigint NOT NULL DEFAULT 0, total bigint NOT NULL, metodo text NOT NULL, cupon boolean NOT NULL DEFAULT false, estado text NOT NULL DEFAULT 'pendiente', creado timestamptz NOT NULL DEFAULT now())`;
+    await q`ALTER TABLE pedidos ADD COLUMN IF NOT EXISTS nivel int`;
   })().catch(e => { ready = null; throw e; });
   return ready;
 }
@@ -80,12 +83,13 @@ const precio = p => (p.dto > 0 ? Math.round(p.precio * (1 - p.dto / 100)) : p.pr
 
 async function puntos(q, u) {
   const gasto = Number(u.gasto);
-  const pend = await q`SELECT count(*)::int AS n FROM pedidos WHERE usuario_id = ${u.id} AND estado = 'pendiente' AND cupon = true`;
-  return {
-    gasto, meta: META, desc: DESC,
-    falta: META - (gasto % META),
-    disponibles: Math.max(0, Math.floor(gasto / META) - u.usados - pend[0].n)
-  };
+  const alcanzados = NIVELES.filter(n => gasto >= n.meta).length;
+  let ocupados = Number(u.niveles_usados) || 0; // niveles ya usados + reservados por pedidos pendientes
+  for (const r of await q`SELECT nivel FROM pedidos WHERE usuario_id = ${u.id} AND estado = 'pendiente' AND nivel IS NOT NULL`) ocupados |= 1 << (r.nivel - 1);
+  const cupones = [];
+  for (let i = 0; i < alcanzados; i++) if (!(ocupados & (1 << i))) cupones.push({ nivel: i + 1, desc: NIVELES[i].desc });
+  const p = NIVELES[alcanzados];
+  return { gasto, nivel: alcanzados, niveles: NIVELES, cupones, proximo: p ? { nivel: alcanzados + 1, meta: p.meta, desc: p.desc, falta: p.meta - gasto } : null };
 }
 
 module.exports = async (req, res) => {
@@ -157,7 +161,7 @@ module.exports = async (req, res) => {
       if (!me) return send(res, 401, { error: 'No autorizado' });
       if (me.a) return send(res, 200, { adm: true, nombre: 'Administrador', email: adminEmail() });
       await init(); const q = db();
-      const r = await q`SELECT id, email, nombre, gasto, usados FROM usuarios WHERE id = ${me.u}`;
+      const r = await q`SELECT id, email, nombre, gasto, niveles_usados FROM usuarios WHERE id = ${me.u}`;
       if (!r[0]) return send(res, 401, { error: 'No autorizado' });
       return send(res, 200, { adm: false, nombre: r[0].nombre, email: r[0].email, ...(await puntos(q, r[0])) });
     }
@@ -168,7 +172,7 @@ module.exports = async (req, res) => {
     // ----- catálogo
     if (path === 'store' && m === 'GET') {
       const r = await q`SELECT valor FROM ajustes WHERE clave = 'tienda'`;
-      return send(res, 200, r[0] ? r[0].valor : { items: [], portada: '', videos: [] });
+      return send(res, 200, { ...(r[0] ? r[0].valor : { items: [], portada: '', videos: [] }), niveles: NIVELES });
     }
     if (path === 'store' && m === 'PUT') {
       if (!me || !me.a) return send(res, 401, { error: 'No autorizado' });
@@ -213,19 +217,22 @@ module.exports = async (req, res) => {
         lineas.push({ id: p.id, nombre: p.nombre, qty, unit: precio(p), sub: precio(p) * qty });
       }
       const subtotal = lineas.reduce((a, l) => a + l.sub, 0);
-      let descuento = 0, cupon = false, uid = null;
+      let descuento = 0, nivel = null, uid = null;
       if (me && !me.a && me.u) {
-        const u = (await q`SELECT id, gasto, usados FROM usuarios WHERE id = ${me.u}`)[0];
+        const u = (await q`SELECT id, gasto, niveles_usados FROM usuarios WHERE id = ${me.u}`)[0];
         if (u) {
           uid = u.id;
-          if (b.cupon === true && (await puntos(q, u)).disponibles > 0) { cupon = true; descuento = Math.round(subtotal * DESC / 100); }
+          const { cupones } = await puntos(q, u);
+          const pedido = b.cupon === true ? (cupones[cupones.length - 1] || {}).nivel : Number(b.cupon);
+          const c = cupones.find(x => x.nivel === pedido);
+          if (c) { nivel = c.nivel; descuento = Math.round(subtotal * c.desc / 100); }
         }
       }
       const total = subtotal - descuento;
-      const r = await q`INSERT INTO pedidos (usuario_id, nombre, telefono, entrega, direccion, items, subtotal, descuento, total, metodo, cupon)
-        VALUES (${uid}, ${nombre}, ${telefono}, ${entrega}, ${direccion ? JSON.stringify(direccion) : null}::jsonb, ${JSON.stringify(lineas)}::jsonb, ${subtotal}, ${descuento}, ${total}, ${metodo}, ${cupon})
+      const r = await q`INSERT INTO pedidos (usuario_id, nombre, telefono, entrega, direccion, items, subtotal, descuento, total, metodo, cupon, nivel)
+        VALUES (${uid}, ${nombre}, ${telefono}, ${entrega}, ${direccion ? JSON.stringify(direccion) : null}::jsonb, ${JSON.stringify(lineas)}::jsonb, ${subtotal}, ${descuento}, ${total}, ${metodo}, ${nivel !== null}, ${nivel})
         RETURNING id`;
-      return send(res, 200, { id: r[0].id, subtotal, descuento, total, lineas });
+      return send(res, 200, { id: r[0].id, subtotal, descuento, total, nivel, lineas });
     }
     if (path === 'pedidos' && m === 'GET') {
       if (!me || !me.a) return send(res, 401, { error: 'No autorizado' });
@@ -238,10 +245,10 @@ module.exports = async (req, res) => {
       if (!me || !me.a) return send(res, 401, { error: 'No autorizado' });
       const est = (await jbody(req)).estado;
       if (!['pagado', 'cancelado'].includes(est)) return send(res, 400, { error: 'Estado inválido' });
-      const r = await q`UPDATE pedidos SET estado = ${est} WHERE id = ${Number(pe[1])} AND estado = 'pendiente' RETURNING usuario_id, total, cupon`;
+      const r = await q`UPDATE pedidos SET estado = ${est} WHERE id = ${Number(pe[1])} AND estado = 'pendiente' RETURNING usuario_id, total, nivel`;
       if (!r[0]) return send(res, 409, { error: 'Ese pedido ya estaba cerrado.' });
       if (est === 'pagado' && r[0].usuario_id)
-        await q`UPDATE usuarios SET gasto = gasto + ${Number(r[0].total)}, usados = usados + ${r[0].cupon ? 1 : 0} WHERE id = ${r[0].usuario_id}`;
+        await q`UPDATE usuarios SET gasto = gasto + ${Number(r[0].total)}, niveles_usados = niveles_usados | ${r[0].nivel ? 1 << (r[0].nivel - 1) : 0}::int WHERE id = ${r[0].usuario_id}`;
       return send(res, 200, { ok: true });
     }
 
