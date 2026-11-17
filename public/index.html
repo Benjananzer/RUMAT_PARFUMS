@@ -255,6 +255,31 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
 .pager button:hover:not(:disabled){border-color:var(--gold);background:rgba(255,255,255,.1)}
 .pager button:disabled{opacity:.3;cursor:not-allowed}
 .pager span{font-family:var(--sans);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.mq{position:relative;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:linear-gradient(90deg,#120d08,#1d140c 50%,#120d08);height:50px;display:flex;align-items:center}
+.mq-track{display:flex;width:max-content;animation:mq 60s linear infinite}
+.mq-half{display:flex;align-items:center;flex:none}
+.mq-half span{font-family:var(--sans);font-size:.74rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold2);white-space:nowrap}
+.mq-half i{font-style:normal;color:var(--gold);margin:0 34px;font-size:.6rem}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mq:hover .mq-track,.mq.pause .mq-track{animation-play-state:paused}
+.mq-btn{position:absolute;right:10px;top:50%;translate:0 -50%;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#120d08;color:var(--gold2);display:grid;place-items:center;cursor:pointer;z-index:2}
+.mq-btn:hover{border-color:var(--gold)}
+@media (prefers-reduced-motion:reduce){.mq-track{animation-duration:60s!important;animation-iteration-count:infinite!important}}
+@media(max-width:600px){
+#grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{padding:10px 10px 12px;border-radius:14px;gap:6px}
+.card:hover{translate:0 0}
+.ph{margin:-10px -10px 6px}
+.badge{font-size:.54rem;letter-spacing:.12em;padding:4px 8px}
+.off{top:8px;right:8px;font-size:.6rem;padding:4px 8px}
+.card h3{font-size:1rem;letter-spacing:.03em;margin-top:2px}
+.card p{font-size:.92rem;-webkit-line-clamp:2}
+.price{font-size:1.15rem;gap:6px}
+.price s{font-size:.8rem}
+.stk{font-size:.58rem;letter-spacing:.1em}
+.buy{padding:11px 6px;font-size:.6rem;letter-spacing:.1em;border-radius:8px}
+.mq{height:44px}.mq-half span{font-size:.66rem;letter-spacing:.2em}
+}
 </style>
 </head>
 <body>
@@ -273,6 +298,7 @@ footer p{color:var(--muted);margin:10px 0;font-size:.85rem}
   </div>
   <a class="cue" href="#catalogo"><span>Descubrí la colección</span><i></i></a>
 </header>
+<div class="mq" id="mq" role="region" aria-label="Novedades de la tienda"><div class="mq-track" id="mqTrack"></div><button type="button" class="mq-btn" id="mqBtn" aria-pressed="false" aria-label="Pausar el texto en movimiento"></button></div>
 
 <main class="catalog" id="catalogo">
   <div class="wrap"><div class="reveal"><div class="orn"><b></b></div><h2 class="gold">La colección</h2><p class="lead">Elegí tu esencia</p></div></div>
@@ -330,7 +356,7 @@ function pf(p){return p.dto>0?Math.round(p.precio*(1-p.dto/100)):p.precio}
 function readImg(file,max){return new Promise(function(ok,no){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,max/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(function(b){up(b,'image/jpeg').then(ok,no)},'image/jpeg',.82)};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
 function sha(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode('rumat:'+s)).then(function(b){return Array.from(new Uint8Array(b)).map(function(x){return x.toString(16).padStart(2,'0')}).join('')})}
 var data=[],pago={alias:'',titular:'',qr:''},portada='',adm='',vids=[];
-var pagina=1,lastSig='',PAGE=12,busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
+var NIV=[{meta:159000,desc:10},{meta:318000,desc:20},{meta:477000,desc:50}],pagina=1,lastSig='',PAGE=12,busq='',orden='',ME=null,filter='todos',isAdmin=true,art=null,WA='5493425264974',editId=null;
 var LABEL={masculino:'Masculino',femenino:'Femenino',unisex:'Unisex'};
 var METODO={transferencia:'Transferencia (alias)',efectivo:'Efectivo',qr:'QR'};
 var buy=null;
@@ -409,9 +435,11 @@ function addCart(p){var c=cart.filter(function(x){return x.p===p})[0],ok=false;
 function cartTotal(){return cart.reduce(function(a,c){return a+pf(c.p)*c.qty},0)}
 function updCart(){var n=cart.reduce(function(a,c){return a+c.qty},0),b=$('#cartBtn');b.hidden=!n;b.querySelector('b').textContent=n}
 $('#cartBtn').onclick=function(){openBuy()};
-function buyDesc(){return buy&&buy.cupon&&ME&&ME.disponibles>0?Math.round(cartTotal()*ME.desc/100):0}
+function cupDesc(){var c=buy&&buy.cupon&&ME&&ME.cupones&&ME.cupones.filter(function(x){return x.nivel===buy.cupon})[0];return c?c.desc:0}
+function buyDesc(){return Math.round(cartTotal()*cupDesc()/100)}
+function listaDesc(a){a=a.map(function(n){return n+'%'});return a.length>1?a.slice(0,-1).join(', ')+' y '+a[a.length-1]:a[0]||''}
 function buyTotal(){return cartTotal()-buyDesc()}
-function openBuy(){buy={nombre:ME&&!ME.adm?ME.nombre:'',telefono:'',entrega:'retiro',calle:'',localidad:'',cp:'',provincia:'',nota:'',metodo:'transferencia',cupon:false,done:false};renderBuy();$('#modal').classList.add('open')}
+function openBuy(){buy={nombre:ME&&!ME.adm?ME.nombre:'',telefono:'',entrega:'retiro',calle:'',localidad:'',cp:'',provincia:'',nota:'',metodo:'transferencia',cupon:0,done:false};renderBuy();$('#modal').classList.add('open')}
 function closeBuy(){$('#modal').classList.remove('open')}
 $('#modal').onclick=function(e){if(e.target===this)closeBuy()};
 function payInfo(){var b=el('div','info');
@@ -420,7 +448,7 @@ function payInfo(){var b=el('div','info');
   return b}
 function waLink(p){var d=buy.entrega==='envio'?'Envío a: '+[buy.calle,buy.localidad,'CP '+buy.cp,buy.provincia].filter(function(x){return x&&x.trim()}).join(', ')+(buy.nota?' (Nota: '+buy.nota+')':'')+'\nEl costo del envío me lo confirman por acá.':'Retiro en el local';
   var t='Hola! Hice el pedido #'+p.id+' en la web:\n'+p.lineas.map(function(l){return '• '+l.qty+' x '+l.nombre+' ('+fmt(l.sub)+')'}).join('\n')
-   +'\nSubtotal: '+fmt(p.subtotal)+(p.descuento>0?'\nDescuento por puntos: -'+fmt(p.descuento):'')+'\nTotal: '+fmt(p.total)
+   +'\nSubtotal: '+fmt(p.subtotal)+(p.descuento>0?'\nDescuento por puntos'+(p.nivel?' (nivel '+p.nivel+')':'')+': -'+fmt(p.descuento):'')+'\nTotal: '+fmt(p.total)
    +'\nEntrega: '+d+'\nForma de pago: '+METODO[buy.metodo]+'\nNombre: '+buy.nombre+'\nTeléfono: '+buy.telefono;
   return 'https://wa.me/'+WA+'?text='+encodeURIComponent(t)}
 function sheetOpen(title){var s=$('#sheet');s.innerHTML='';var h=el('div','dh');h.appendChild(el('h3','gold',title));
@@ -439,11 +467,13 @@ function renderBuy(){
     m.onclick=function(){c.qty--;if(c.qty<1)cart.splice(cart.indexOf(c),1);updCart();renderBuy()};
     pl.onclick=function(){if(c.qty<stockOf(c.p)){c.qty++;updCart()}renderBuy()};
     q.appendChild(m);q.appendChild(el('span',null,String(c.qty)));q.appendChild(pl);pr.appendChild(q);b.appendChild(pr)});
-  if(buyDesc()>0){var dd=el('div','total');dd.appendChild(el('span',null,'Descuento por puntos ('+ME.desc+'%)'));dd.appendChild(el('span','gold','-'+fmt(buyDesc())));b.appendChild(dd)}
+  if(buyDesc()>0){var dd=el('div','total');dd.appendChild(el('span',null,'Descuento por puntos (nivel '+buy.cupon+', '+cupDesc()+'%)'));dd.appendChild(el('span','gold','-'+fmt(buyDesc())));b.appendChild(dd)}
   var t=el('div','total');t.appendChild(el('span',null,'Total'));t.appendChild(el('span','gold',fmt(buyTotal())));b.appendChild(t);
-  if(ME&&!ME.adm&&ME.disponibles>0){
-    var cl=el('label','opt'+(buy.cupon?' sel':'')),ck=el('input'),tx=el('div');ck.type='checkbox';ck.checked=buy.cupon;ck.onchange=function(){buy.cupon=ck.checked;renderBuy()};
-    tx.appendChild(el('b',null,'Usar mi '+ME.desc+'% de descuento'));tx.appendChild(el('small',null,'Tenés '+ME.disponibles+(ME.disponibles>1?' disponibles':' disponible')));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)}
+  if(ME&&!ME.adm&&ME.cupones&&ME.cupones.length){
+    ME.cupones.slice().reverse().forEach(function(c){
+      var cl=el('label','opt'+(buy.cupon===c.nivel?' sel':'')),ck=el('input'),tx=el('div');ck.type='checkbox';ck.checked=buy.cupon===c.nivel;
+      ck.onchange=function(){buy.cupon=ck.checked?c.nivel:0;renderBuy()};
+      tx.appendChild(el('b',null,'Usar mi '+c.desc+'% de descuento'));tx.appendChild(el('small',null,'Nivel '+c.nivel+' · se usa una sola vez'));cl.appendChild(ck);cl.appendChild(tx);b.appendChild(cl)})}
   else if(!ME){var li=el('button','btn2 ghost','Ingresá para sumar puntos y descuentos');li.type='button';li.onclick=function(){openAccount(function(){renderBuy()})};b.appendChild(li)}
   function bi(label,key,type,ph,ac){b.appendChild(el('div','lab',label));var i=el('input','fld');i.type=type||'text';i.value=buy[key]||'';if(ph)i.placeholder=ph;if(ac)i.autocomplete=ac;i.oninput=function(){buy[key]=i.value};b.appendChild(i)}
   bi('Tu nombre','nombre','text','Nombre y apellido','name');
@@ -469,7 +499,7 @@ function renderBuy(){
     ok.disabled=true;em.textContent='Registrando tu pedido…';
     api('pedidos',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({nombre:n,telefono:buy.telefono,entrega:buy.entrega,
       direccion:buy.entrega==='envio'?{calle:buy.calle,localidad:buy.localidad,cp:buy.cp,provincia:buy.provincia,nota:buy.nota}:null,
-      metodo:buy.metodo,cupon:!!buy.cupon,items:cart.map(function(c){return{id:c.p.id,qty:c.qty}})})})
+      metodo:buy.metodo,cupon:buy.cupon||0,items:cart.map(function(c){return{id:c.p.id,qty:c.qty}})})})
     .then(function(p){buy.nombre=n;buy.done=true;buy.pedido=p;cart=[];updCart();loadMe();renderBuy();
       try{window.open($('#sheet a.btn2').href,'_blank','noopener')}catch(e){}})
     .catch(function(e){ok.disabled=false;em.textContent=e.message||'No se pudo registrar el pedido.'})};
@@ -488,9 +518,12 @@ function openAccount(after,tab){
   var b=sheetOpen(ME?'MI CUENTA':'TU CUENTA');
   if(ME){b.appendChild(el('div','info',ME.nombre+(ME.email?' · '+ME.email:'')));
     if(ME.adm){var g=el('button','btn2','Ir al administrador');g.type='button';g.onclick=function(){closeBuy();location.hash='admin'};b.appendChild(g)}
-    else{b.appendChild(el('div','lab','Tus puntos'));var pr=el('div','prog'),bar=el('i');bar.style.width=Math.round((ME.meta-ME.falta)/ME.meta*100)+'%';pr.appendChild(bar);b.appendChild(pr);
-      b.appendChild(el('div',null,'Compras confirmadas: '+fmt(ME.gasto)+'. Te faltan '+fmt(ME.falta)+' para ganar un '+ME.desc+'% de descuento.'));
-      b.appendChild(el('div','info','Descuentos disponibles: '+ME.disponibles+(ME.disponibles?'. Lo podés usar en tu próximo carrito.':'')))}
+    else{b.appendChild(el('div','lab','Tu nivel'));
+      b.appendChild(el('div',null,ME.nivel?'Nivel '+ME.nivel+' alcanzado':'Todavía no alcanzaste el nivel 1'));
+      var pr=el('div','prog'),bar=el('i'),prev=ME.nivel?NIV[ME.nivel-1].meta:0;bar.style.width=(ME.proximo?Math.max(0,Math.min(100,Math.round((ME.gasto-prev)/(ME.proximo.meta-prev)*100))):100)+'%';pr.appendChild(bar);b.appendChild(pr);
+      b.appendChild(el('div',null,'Compras confirmadas: '+fmt(ME.gasto)+(ME.proximo?'. Te faltan '+fmt(ME.proximo.falta)+' para el nivel '+ME.proximo.nivel+' ('+ME.proximo.desc+'% de descuento).':'. ¡Llegaste al nivel máximo!')));
+      var lv=el('div','info');lv.appendChild(el('b',null,'Niveles'));NIV.forEach(function(n,i){lv.appendChild(el('div',null,'Nivel '+(i+1)+' · '+fmt(n.meta)+' en compras → '+n.desc+'% de descuento'+(ME.nivel>i?' ✓':'')))});b.appendChild(lv);
+      b.appendChild(el('div','info',ME.cupones.length?'Descuentos disponibles: '+ME.cupones.map(function(c){return c.desc+'% (nivel '+c.nivel+')'}).join(', ')+'. Podés usar uno por pedido, desde el carrito.':'Todavía no tenés descuentos disponibles.'))}
     var o=el('button','btn2 ghost','Cerrar sesión');o.type='button';o.onclick=function(){setTok('');ME=null;showMe();if(location.hash==='#admin')location.hash='';closeBuy()};b.appendChild(o);return}
   var reg=tab==='reg',row=el('div','opts');
   [['in','Ingresar'],['reg','Crear cuenta']].forEach(function(t){var k=el('button','chip',t[1]);k.type='button';k.setAttribute('aria-pressed',(t[0]==='reg')===reg);k.onclick=function(){openAccount(after,t[0])};row.appendChild(k)});b.appendChild(row);
@@ -661,11 +694,18 @@ function api(path,opt){opt=opt||{};opt.headers=Object.assign({},opt.headers);if(
 function up(blob,type){return fetch('/api/media',{method:'POST',headers:{'Content-Type':type,Authorization:'Bearer '+TOKEN},body:blob})
   .then(function(r){if(!r.ok)throw new Error('up');return r.json()}).then(function(j){return j.url})}
 function showMe(){$('#userBtn').textContent=ME?(ME.adm?'Admin':'Mi cuenta'):'Ingresar';$('#adminBtn').hidden=!(ME&&ME.adm);renderPromo()}
+var MQ_ICO={pause:'<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1"/><rect x="14" y="4" width="5" height="16" rx="1"/></svg>',play:'<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z"/></svg>'};
+function showMarquee(){var t=$('#mqTrack'),mx=Math.max.apply(null,NIV.map(function(n){return n.desc}));
+  var frases=['Fragancias árabes y de diseñador','Retiro en el local · Franck, Santa Fe','Creá tu cuenta, subí de nivel y ganá hasta '+mx+'% de descuento','Consultá y comprá por WhatsApp'];
+  var mitad='';for(var k=0;k<2;k++)frases.forEach(function(f){mitad+='<span>'+f+'</span><i aria-hidden="true">◆</i>'});
+  t.innerHTML='<div class="mq-half">'+mitad+'</div><div class="mq-half" aria-hidden="true">'+mitad+'</div>';
+  var bt=$('#mqBtn');bt.innerHTML=MQ_ICO.pause;
+  bt.onclick=function(){var p=$('#mq').classList.toggle('pause');bt.setAttribute('aria-pressed',p);bt.setAttribute('aria-label',p?'Reanudar el texto en movimiento':'Pausar el texto en movimiento');bt.innerHTML=p?MQ_ICO.play:MQ_ICO.pause}}
 function renderPromo(){var p=$('#promo');p.innerHTML='';
   if(ME&&ME.adm){p.hidden=true;return}
   var t=el('p'),b=el('button',null,ME?'Ver mi cuenta':'Crear cuenta');b.type='button';
-  if(ME){t.appendChild(el('b',null,'Tus puntos: '));t.appendChild(document.createTextNode(ME.disponibles>0?'tenés '+ME.disponibles+(ME.disponibles>1?' descuentos':' descuento')+' del '+ME.desc+'% para usar en tu próximo pedido.':'te faltan '+fmt(ME.falta)+' en compras para ganar un '+ME.desc+'% de descuento.'));b.onclick=function(){openAccount()}}
-  else{t.appendChild(el('b',null,'Creá tu cuenta y sumá puntos. '));t.appendChild(document.createTextNode('Cada $159.000 en compras te da un 10% de descuento en tu próxima compra.'));b.onclick=function(){openAccount(null,'reg')}}
+  if(ME){t.appendChild(el('b',null,'Nivel '+ME.nivel+': '));t.appendChild(document.createTextNode(ME.cupones.length?'tenés '+ME.cupones.length+(ME.cupones.length>1?' descuentos disponibles ('+ME.cupones.map(function(c){return c.desc+'%'}).join(' y ')+')':' descuento disponible del '+ME.cupones[0].desc+'%')+' para tu próximo pedido.':(ME.proximo?'te faltan '+fmt(ME.proximo.falta)+' en compras para el nivel '+ME.proximo.nivel+' ('+ME.proximo.desc+'% de descuento).':'llegaste al nivel máximo.')));b.onclick=function(){openAccount()}}
+  else{t.appendChild(el('b',null,'Creá tu cuenta y sumá puntos. '));t.appendChild(document.createTextNode('Con tus compras subís de nivel y ganás descuentos de '+listaDesc(NIV.map(function(n){return n.desc}))+'.'));b.onclick=function(){openAccount(null,'reg')}}
   p.appendChild(t);p.appendChild(b);p.hidden=false}
 function loadMe(){if(!TOKEN){ME=null;showMe();return Promise.resolve()}return api('yo').then(function(m){ME=m}).catch(function(){ME=null}).then(showMe)}
 $('#userBtn').onclick=function(){openAccount()};
@@ -683,10 +723,10 @@ $('#busq').oninput=function(){busq=this.value;renderGrid()};
   document.addEventListener('click',function(e){if(!dd.contains(e.target))open(false)})})();
 $('#privLink').onclick=function(e){e.preventDefault();openPriv()};
 Promise.all([
-  api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice()})
+  api('store').then(function(j){data=j.items||[];portada=j.portada||'';vids=(j.videos||[]).slice();if(j.niveles&&j.niveles.length)NIV=j.niveles})
     .catch(function(){var c=$('#count');if(c)c.textContent='No se pudo cargar el catálogo. Recargá la página.'}),
   loadMe()
-]).then(function(){showCover();showVids();renderChips();renderGrid();route();routeD();
+]).then(function(){showCover();showVids();showMarquee();renderPromo();renderChips();renderGrid();route();routeD();
   var rt=new URLSearchParams(location.search).get('reset');if(rt)openReset(rt)});
 })();
 </script>
